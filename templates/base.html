@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}STI Store{% endblock %}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- HEADER -->
+    <header class="container-fluid sticky-header bg-site py-3">
+        <div class="container d-flex align-items-center justify-content-between">
+
+            <img src="{{ url_for('static', filename='img/logosti.jpg') }}" class="img-fluid d-none d-md-block"
+                style="max-width:260px;">
+
+            <div class="text-center flex-grow-1">
+                <h1 class="mb-0">Tienda de Tecnología</h1>
+                <small>Tenemos los mejores precios del mercado</small>
+            </div>
+
+            <div class="d-flex flex-column align-items-end gap-2">
+
+                <!-- REDES SOCIALES -->
+                <div class="d-flex gap-3">
+
+                    <a href="https://wa.me/5493575412796" target="_blank" class="social-icon-header">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </a>
+
+                    <a href="https://www.instagram.com/sti_computacion" target="_blank" class="social-icon-header">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+
+                    <a href="https://www.facebook.com/sti.computacion.5/" target="_blank" class="social-icon-header">
+                        <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+
+                    <a href="https://www.linkedin.com/feed/" target="_blank" class="social-icon-header">
+                        <i class="fa-brands fa-linkedin"></i>
+                    </a>
+
+                </div>
+
+                <!-- COTIZACION DEL DOLAR -->
+                <div class="cotizacion-dolar">
+
+                    <span class="dolar-titulo">
+                        <i class="fa-solid fa-dollar-sign"></i>
+                        Dólar Oficial
+                    </span>
+
+                    <span class="dolar-compra">
+                        Compra:
+                        <strong id="dolarCompra">...</strong>
+                    </span>
+
+                    <span class="dolar-venta">
+                        Venta:
+                        <strong id="dolarVenta">...</strong>
+                    </span>
+
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- NAVBAR (SIN CAMBIOS) -->
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('tienda.index') }}">STI Store</a>
+
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('tienda.tienda') }}">Tienda</a>
+                </li>
+            </ul>
+
+            <!-- empieza-->
+
+            <ul class="navbar-nav ms-auto">
+                <!-- ===================================================== -->
+                <!-- TABLAS -->
+                <!-- ===================================================== -->
+                <li class="nav-item dropdown">
+
+                    <a class="nav-link dropdown-toggle" href="#" id="menuTablas" role="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+
+                        Tablas
+                    </a>
+
+                    <ul class="dropdown-menu">
+
+                        <!-- ================= TABLAS SOPORTE ================= -->
+                        <li class="dropdown-submenu">
+
+                            <a class="dropdown-item dropdown-toggle" href="#">
+                                Tablas Soporte
+                            </a>
+
+                            <ul class="dropdown-menu">
+
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('entidades.articulos') }}">
+                                        Tipos de Pago
+                                    </a>
+                                </li>
+
+                            </ul>
+
+                        </li>
+
+                        <!-- ================= TABLAS PERSONAS ================= -->
+                        <li class="dropdown-submenu">
+
+                            <a class="dropdown-item dropdown-toggle" href="#">
+                                Tablas Personas
+                            </a>
+
+                            <ul class="dropdown-menu">
+
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('soporte.localidades') }}">
+                                        Localidades
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('soporte.provincias') }}">
+                                        Provincias
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('soporte.paises') }}">
+                                        Países
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('soporte.tipos_contribuyente') }}">
+                                        Tipos Contribuyente Fiscal
+                                    </a>
+                                </li>
+
+                            </ul>
+
+                        </li>
+
+                        <!-- ================= TABLAS ARTICULOS ================= -->
+                        <li class="dropdown-submenu">
+
+                            <a class="dropdown-item dropdown-toggle" href="#">
+                                Tablas Artículos
+                            </a>
+
+                            <ul class="dropdown-menu">
+
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('soporte.grupos') }}">
+                                        Grupos
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('soporte.rubros') }}">
+                                        Rubros
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('soporte.marcas') }}">
+                                        Marcas
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('soporte.unidades') }}">
+                                        Unidades de Medida
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('soporte.tipos_iva') }}">
+                                        Tipos de IVA
+                                    </a>
+                                </li>
+
+                            </ul>
+
+                        </li>
+
+                        <!-- ================= TABLAS ENTIDADES ================= -->
+                        <li class="dropdown-submenu">
+
+                            <a class="dropdown-item dropdown-toggle" href="#">
+                                Tablas Entidades
+                            </a>
+
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('entidades.articulos') }}">
+                                        Artículos
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('entidades.clientes') }}">
+                                        Clientes
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('entidades.proveedores') }}">
+                                        Proveedores
+                                    </a>
+                                </li>
+                            </ul>
+
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item" href="{{ url_for('soporte.tablagral') }}">
+                                Configuracion General
+                            </a>
+                        </li>
+                        <li>
+                            <a <a class="dropdown-item" href="{{ url_for('soporte.backup_bd') }}">
+                                Respaldo Base Datos
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                
+
+            </ul>
+
+            <!-- termina -->
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navBarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navBarNav">
+                <ul class="navbar-nav ms-auto">
+
+                    {% if session.get('user') %}
+                    {% if session.get('rol') == 'admin' %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            Gestión Usuarios
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark">
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('seguridad.usuarios') }}">
+                                    Usuarios
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('seguridad.roles') }}">
+                                    <i class="fa-solid fa-box me-2"></i> Roles Usuarios
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    {% endif %}
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('seguridad.logout') }}">
+                            Salir ({{ session['user'] }})
+                        </a>
+                    </li>
+
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('seguridad.login') }}">
+                            Log In
+                        </a>
+                    </li>
+                    {% endif %}
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+    <template>
+        <div class="d-flex">
+
+            {% if session.get('user') and (session.get('rol') == 'admin' or session.get('rol') == 'empleado') %}
+
+            <nav id="sidebar" class="bg-dark text-white p-3" style="width: 280px; min-height: 100vh;">
+                <h4 class="text-center mb-4">Sistema</h4>
+
+                {% set ep = request.endpoint or '' %}
+                {% set menu_soporte = ep in [
+                'soporte.grupos',
+                'soporte.rubros',
+                'soporte.marcas',
+                'soporte.unidades',
+                'soporte.tipos_iva'
+                ] %}
+                {% set menu_entidades = ep in ['articulos','create_articulo','edit_articulo'] %}
+                {% set submenu_articulos = ep in ['articulos','create_articulo','edit_articulo'] %}
+
+                <ul class="nav nav-pills flex-column mb-auto">
+
+                    <!-- SOPORTE -->
+                    <li>
+                        <a class="nav-link text-white" data-bs-toggle="collapse" href="#datosGenerales"
+                            aria-expanded="{{ 'true' if menu_soporte else 'false' }}">
+                            Soporte
+                        </a>
+
+                        <div class="collapse {% if menu_soporte %}show{% endif %}" id="datosGenerales">
+                            <ul class="list-unstyled small">
+
+                                <!-- TABLAS PERSONAS -->
+                                <li>
+                                    <a class="nav-link text-white ps-4" data-bs-toggle="collapse" href="#tablasPersonas"
+                                        aria-expanded="{{ 'true' if menu_soporte else 'false' }}">
+                                        Tablas Personas
+                                    </a>
+
+                                    <div class="collapse {% if menu_soporte %}show{% endif %}" id="tablasPersonas">
+                                        <ul class="list-unstyled small">
+
+                                            <li>
+                                                <a href="{{ url_for('soporte.localidades') }}"
+                                                    class="nav-link ps-5 {% if ep == 'soporte.localidades' %}active bg-primary{% else %}text-white{% endif %}">
+                                                    Localidades
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="{{ url_for('soporte.provincias') }}"
+                                                    class="nav-link ps-5 {% if ep == 'soporte.provincias' %}active bg-primary{% else %}text-white{% endif %}">
+                                                    Provincias
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="{{ url_for('soporte.paises') }}"
+                                                    class="nav-link ps-5 {% if ep == 'soporte.paises' %}active bg-primary{% else %}text-white{% endif %}">
+                                                    Países
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="{{ url_for('soporte.tipos_contribuyente') }}"
+                                                    class="nav-link ps-5 {% if ep == 'soporte.tipos_contribuyente' %}active bg-primary{% else %}text-white{% endif %}">
+                                                    Tipo de Contribuyente fiscal
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <!-- TABLAS ARTICULOS -->
+                                <li>
+                                    <a class="nav-link text-white ps-4" data-bs-toggle="collapse"
+                                        href="#tablasArticulos"
+                                        aria-expanded="{{ 'true' if menu_soporte else 'false' }}">
+                                        Tablas Artículos
+                                    </a>
+
+                                    <div class="collapse {% if menu_soporte %}show{% endif %}" id="tablasArticulos">
+                                        <ul class="list-unstyled small">
+
+                                            <li>
+                                                <a href="{{ url_for('soporte.grupos') }}"
+                                                    class="nav-link ps-5 {% if ep == 'soporte.grupos' %}active bg-primary{% else %}text-white{% endif %}">
+                                                    Grupos
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="{{ url_for('soporte.rubros') }}"
+                                                    class="nav-link ps-5 {% if ep == 'soporte.rubros' %}active bg-primary{% else %}text-white{% endif %}">
+                                                    Rubros
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="{{ url_for('soporte.marcas') }}"
+                                                    class="nav-link ps-5 {% if ep == 'soporte.marcas' %}active bg-primary{% else %}text-white{% endif %}">
+                                                    Marcas
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="{{ url_for('soporte.unidades') }}"
+                                                    class="nav-link ps-5 {% if ep == 'soporte.unidades' %}active bg-primary{% else %}text-white{% endif %}">
+                                                    Unidades de Medida
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="{{ url_for('soporte.tipos_iva') }}"
+                                                    class="nav-link ps-5 {% if ep == 'soporte.tipos_iva' %}active bg-primary{% else %}text-white{% endif %}">
+                                                    Tipos de IVA
+                                                </a>
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </li>
+
+                    <!-- ENTIDADES -->
+                    <li>
+                        <a class="nav-link text-white" data-bs-toggle="collapse" href="#datosEntidades"
+                            aria-expanded="{{ 'true' if menu_entidades else 'false' }}">
+                            Entidades
+                        </a>
+
+                        <div class="collapse {% if menu_entidades %}show{% endif %}" id="datosEntidades">
+                            <ul class="list-unstyled small">
+
+                                <li>
+                                    <a class="nav-link text-white ps-4" data-bs-toggle="collapse" href="#articulosSub"
+                                        aria-expanded="{{ 'true' if submenu_articulos else 'false' }}">
+                                        Artículos
+                                    </a>
+
+                                    <div class="collapse {% if submenu_articulos %}show{% endif %}" id="articulosSub">
+                                        <ul class="list-unstyled small">
+                                            <li>
+                                                <a href="{{ url_for('entidades.articulos') }}"
+                                                    class="nav-link ps-5 {% if ep == 'articulos' %}active bg-primary{% else %}text-white{% endif %}">
+                                                    Artículos
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <a class="nav-link text-white ps-4" data-bs-toggle="collapse" href="#proveedoresSub"
+                                        aria-expanded="{{ 'true' if submenu_proveedores else 'false' }}">
+                                        Proveedores
+                                    </a>
+
+                                    <div class="collapse {% if submenu_proveedores %}show{% endif %}"
+                                        id="proveedoresSub">
+                                        <ul class="list-unstyled small">
+                                            <li>
+                                                <a href="{{ url_for('entidades.proveedores') }}"
+                                                    class="nav-link ps-5 {% if ep == 'proveedores' %}active bg-primary{% else %}text-white{% endif %}">
+                                                    Proveedores
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <a class="nav-link text-white ps-4" data-bs-toggle="collapse" href="#clientesSub"
+                                        aria-expanded="{{ 'true' if submenu_clientes else 'false' }}">
+                                        Clientes
+                                    </a>
+
+                                    <div class="collapse {% if submenu_clientes %}show{% endif %}" id="clientesSub">
+                                        <ul class="list-unstyled small">
+                                            <li>
+                                                <a href="{{ url_for('entidades.clientes') }}"
+                                                    class="nav-link ps-5 {% if ep == 'clientes' %}active bg-primary{% else %}text-white{% endif %}">
+                                                    Clientes
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </li>
+
+
+
+                    <!-- GESTION STOCK -->
+                    <li>
+                        <a class="nav-link text-white" data-bs-toggle="collapse" href="#gestionStock">
+                            Stock
+                        </a>
+                        <div class="collapse" id="gestionStock">
+                            <ul class="list-unstyled small">
+                                <li><a href="#" class="nav-link text-white ps-4">Notas de Pedido</a></li>
+                                <li><a href="#" class="nav-link text-white ps-4">Órdenes de Compra</a></li>
+                                <li><a href="#" class="nav-link text-white ps-4">Facturas de Compra</a></li>
+                                <li><a href="#" class="nav-link text-white ps-4">Existencias Artículos</a></li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <!-- GESTION SERVICIOS -->
+                    <li>
+                        <a class="nav-link text-white" data-bs-toggle="collapse" href="#gestionServicios">
+                            Servicios
+                        </a>
+                        <div class="collapse" id="gestionServicios">
+                            <ul class="list-unstyled small">
+                                <li><a href="#" class="nav-link text-white ps-4">Servicios</a></li>
+                                <li><a href="#" class="nav-link text-white ps-4">Estados de Servicios</a></li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <!-- GESTION VENTAS -->
+                    <li>
+                        <a class="nav-link text-white" data-bs-toggle="collapse" href="#gestionVentas">
+                            Ventas
+                        </a>
+                        <div class="collapse" id="gestionVentas">
+                            <ul class="list-unstyled small">
+                                <li><a href="#" class="nav-link text-white ps-4">Presupuestos</a></li>
+                                <li><a href="#" class="nav-link text-white ps-4">Facturas de Venta</a></li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <!-- GESTION TESORO -->
+                    <li>
+                        <a class="nav-link text-white" data-bs-toggle="collapse" href="#gestionContable">
+                            Tesoro
+                        </a>
+                        <div class="collapse" id="gestionContable">
+                            <ul class="list-unstyled small">
+                                <li><a href="#" class="nav-link text-white ps-4">Cajas</a></li>
+                                <li><a href="#" class="nav-link text-white ps-4">Cuentas</a></li>
+                                <li><a href="#" class="nav-link text-white ps-4">Tarjetas</a></li>
+                                <li><a href="#" class="nav-link text-white ps-4">Cheques</a></li>
+                                <li><a href="#" class="nav-link text-white ps-4">Saldos Clientes</a></li>
+                                <li><a href="#" class="nav-link text-white ps-4">Saldos Proveedores</a></li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <!-- GESTION Informes Empresariales -->
+                    {% if session.get('rol') == 'admin' %}
+                    <li>
+                        <a class="nav-link text-white" data-bs-toggle="collapse" href="#gestionTablero">
+                            Tablero de Comando
+                        </a>
+                        <div class="collapse" id="gestionTablero">
+                            <ul class="list-unstyled small">
+                                <li><a href="#" class="nav-link text-white ps-4">Informe 1</a></li>
+                                <li><a href="#" class="nav-link text-white ps-4">Informe 2</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    {% endif %}
+
+                </ul>
+            </nav>
+            {% endif %}
+    </template>
+
+    <!-- CONTENIDO -->
+    <div class="flex-grow-1 p-4">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer-big mt-auto">
+        <div class="container-fluid px-5 py-5">
+            <div class="row">
+
+                <div class="col-md-4 mb-4">
+                    <div class="footer-logo-big">S T I</div>
+                    <div class="footer-sub-big">Soluciones Tecnológicas Integrales</div>
+                </div>
+
+                <div class="col-md-2 mb-4">
+                    <h4 class="footer-title">Menú</h4>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="{{ url_for('tienda.index') }}">Inicio</a></li>
+                        <li><a href="{{ url_for('tienda.tienda') }}">Tienda</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-md-2 mb-4">
+                    <h4 class="footer-title">Contacto</h4>
+                    <p class="mb-1">+54 9 3575 412796</p>
+                    <p class="mb-1">dmerlosti@hotmail.com</p>
+                    <p class="mb-0">Hipólito Irigoyen 806 local 2</p>
+                    <p class="mb-0">Villa del Rosario - Córdoba</p>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <h4 class="footer-title">Ubicación</h4>
+                    <div class="map-footer">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d6799.792870126979!2d-63.53584851478881!3d-31.554456728374944!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94332ba4de4b4aa9%3A0xb200623bbcccf26!2sS%20T%20I%20Soluciones%20Tecnologicas%20Integrales!5e0!3m2!1ses!2sar!4v1770373632473!5m2!1ses!2sar"
+                            width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="footer-bottom-big text-center">
+                @ Copyright 2026 Todos los derechos reservados <strong>STI+</strong>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // Todos los submenús dentro del navbar
+            document.querySelectorAll(".dropdown-submenu > .dropdown-toggle")
+                .forEach(function (submenuToggle) {
+
+                    submenuToggle.addEventListener("click", function (e) {
+
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const submenu = this.parentElement;
+
+                        // Cerrar otros submenús del mismo nivel
+                        const parentMenu = submenu.parentElement;
+
+                        parentMenu.querySelectorAll(":scope > .dropdown-submenu.show")
+                            .forEach(function (item) {
+
+                                if (item !== submenu) {
+                                    item.classList.remove("show");
+                                }
+
+                            });
+
+                        // Abrir / cerrar el seleccionado
+                        submenu.classList.toggle("show");
+                    });
+
+                });
+
+
+            // Cuando se cierra el menú principal "Tablas",
+            // cerrar también todos sus submenús
+            document.querySelectorAll(".navbar .dropdown")
+                .forEach(function (dropdown) {
+
+                    dropdown.addEventListener("hidden.bs.dropdown", function () {
+
+                        this.querySelectorAll(".dropdown-submenu.show")
+                            .forEach(function (submenu) {
+
+                                submenu.classList.remove("show");
+
+                            });
+
+                    });
+
+                });
+
+        });
+    </script>
+
+
+    <script>
+        window.addEventListener("scroll", () => {
+            const header = document.querySelector(".sticky-header");
+            header.classList.toggle("scrolled", window.scrollY > 20);
+        });
+    </script>
+    <script>
+
+        async function actualizarDolar() {
+
+            const compraElemento = document.getElementById("dolarCompra");
+            const ventaElemento = document.getElementById("dolarVenta");
+
+            // Si el elemento no existe, no hacemos nada
+            if (!compraElemento || !ventaElemento) {
+                return;
+            }
+
+            try {
+
+                const respuesta = await fetch(
+                    "https://dolarapi.com/v1/dolares/oficial"
+                );
+
+                if (!respuesta.ok) {
+                    throw new Error("No se pudo obtener la cotización");
+                }
+
+                const dolar = await respuesta.json();
+
+
+                // Formato argentino
+                const compra = Number(dolar.compra).toLocaleString(
+                    "es-AR",
+                    {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }
+                );
+
+                const venta = Number(dolar.venta).toLocaleString(
+                    "es-AR",
+                    {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }
+                );
+
+
+                compraElemento.textContent = "$ " + compra;
+                ventaElemento.textContent = "$ " + venta;
+
+
+            } catch (error) {
+
+                console.error(
+                    "Error obteniendo dólar oficial:",
+                    error
+                );
+
+                compraElemento.textContent = "No disponible";
+                ventaElemento.textContent = "No disponible";
+            }
+        }
+
+
+        // Actualizar al cargar la página
+        actualizarDolar();
+
+
+        // Actualizar cada 10 minutos
+        setInterval(
+            actualizarDolar,
+            10 * 60 * 1000
+        );
+
+    </script>
+
+</body>
+
+</html>

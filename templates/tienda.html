@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container my-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Listado de Artículos</h3>
+    </div>
+
+    <table class="table table-light table-striped align-middle">
+        <thead>
+            <tr>
+                <!--<th>#</th>-->
+                <th>Imagen</th>
+                <th>Código</th>
+                <th>Concepto</th>
+                <th>Precio $</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for articulo in articulos %}
+            <tr>
+                <!--<td>{{ articulo.id }}</td>-->
+                <td>
+                <img class="img-thumbnail" width="100"
+                        src="{{ url_for('uploads', nombreFoto=articulo.foto) }}" alt="">
+                </td>
+                <td>{{ articulo.codigo }}</td>
+                <td>{{ articulo.concepto }}</td>
+                <td>${{ "{:,.0f}".format(articulo.precontado) }}</td>
+                <td>
+                    <a href="#" class="btn btn-comprar btn-sm">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        Comprar
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

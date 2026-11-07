@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container my-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Listado de Unidades de Medida de Artículos</h3>
+        <a href="{{url_for("soporte.create_unidad")}}" class="btn btn-success">Ingresar NUEVA Unidad de Medida</a>
+    </div>
+
+    <table class="table table-light table-striped align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Concepto</th>
+                <th>Activo</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for unidad in unidades %}
+            <tr>
+                <td>{{ unidad.id }}</td>
+                
+                <td>{{ unidad.concepto }}</td>
+                <td>{{ unidad.activo }}</td>
+                <td>
+                    <a class="btn btn-warning btn-sm"
+                    href="{{ url_for('soporte.edit_unidad', id=unidad.id) }}">
+                        Editar
+                    </a>
+
+                    <a class="btn btn-danger btn-sm"
+                    onclick="return confirm('¿Desea borrar La Unidad de Medida?')"
+                    href="{{ url_for('soporte.destroy_unidad', id=unidad.id) }}">
+                        Eliminar
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

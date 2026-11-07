@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container my-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Listado de Proveedores</h3>
+        <a href="{{url_for("entidades.proveedor_create")}}" class="btn btn-success">Ingresar NUEVO Proveedor</a>
+    </div>
+
+    <table class="table table-light table-striped align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Cuit</th>
+                <th>Concepto</th>
+                <th>Celular</th>
+                <th>Mail</th>
+                <th>Dirección</th>
+                <th>Localidad</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for proveedor in proveedores %}
+            <tr>
+                <td>{{ proveedor.id }}</td>
+                
+                <td>{{ proveedor.cuit }}</td>
+                <td>{{ proveedor.concepto }}</td>
+                <td>{{ proveedor.celular }}</td>
+                <td>{{ proveedor.mail }}</td>
+                <td>{{ proveedor.direccion }}</td>
+                <td>{{ proveedor.localidad }}</td>
+                <td>
+                    <a class="btn btn-warning btn-sm" href="{{ url_for('entidades.proveedor_edit', id=proveedor.id) }}">
+                        Editar
+                    </a>
+                    <a class="btn btn-danger btn-sm"
+                       onclick="return confirm('¿Desea borrar el proveedor?')"
+                       href="{{ url_for('entidades.proveedor_destroy', id=proveedor.id) }}">
+                        Eliminar
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

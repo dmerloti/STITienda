@@ -1,0 +1,198 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="container my-4">
+    <form method="post" action="/guardar_articulo" enctype="multipart/form-data">
+        <div class="card">
+            <div class="card-header">Ingresar Artículo</div>
+
+            <div class="card-body">
+                <h5 class="card-title">Datos del Artículo</h5>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Código</label>
+                        <input class="form-control campo-edicion" type="text" name="txtCodigo" />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label>Código Barras</label>
+                        <input class="form-control campo-edicion" type="text" name="txtCodigoBarras" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Concepto</label>
+                        <input class="form-control campo-edicion" type="text" name="txtConcepto" />
+                    </div>
+
+                    <br />
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Descripción</label>
+                            <textarea class="form-control campo-edicion" name="txtDescripcion" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <br />
+
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label>Rubro</label>
+                            <select class="form-control" name="txtRubro">
+                                <option value="">Seleccione</option>
+                                {% for r in rubros %}
+                                <option value="{{r.id}}">{{r.concepto}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+
+                        <div class="col-md-2">
+                            <label>Proveedor</label>
+                            <select class="form-control" name="txtProveedor">
+                                <option value="">Seleccione</option>
+                                {% for p in proveedores %}
+                                <option value="{{p.id}}">{{p.concepto}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-2">
+                            <label>Marca</label>
+                            <select class="form-control" name="txtMarca">
+                                <option value="">Seleccione</option>
+                                {% for m in marcas %}
+                                <option value="{{m.id}}">{{m.concepto}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                   <!-- </div>
+
+                    <br />
+                    <br />
+
+                    <div class="row">-->
+                        <div class="col-md-2">
+                            <label>Punto Reposición</label>
+                            <input class="form-control campo-edicion" type="number" step="0.01"
+                                name="txtPuntoReposicion" />
+                        </div>
+
+                        <div class="col-md-2">
+                            <label>Existencia</label>
+                            <input class="form-control campo-edicion" type="number" step="0.01" name="txtExistencia"
+                                value="0" readonly />
+                        </div>
+
+                        <div class="col-md-2">
+                            <label>Unidad Medida</label>
+                            <select class="form-control campo-edicion" name="txtUnidad">
+                                <option value="">Seleccione</option>
+                                {% for u in unidades %}
+                                <option value="{{u.id}}">{{u.concepto}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <br />
+                    <div class="col-md-2">
+                        <label>Precio Dólar sin Iva</label>
+                        <input class="form-control campo-edicion" type="number" step="0.01" name="txtDolar" />
+                    </div>
+                    <div class="col-md-2">
+                        <label>Precio Pesos sin Iva</label>
+                        <input class="form-control campo-edicion" type="number" step="0.01" name="txtPrecio" />
+                    </div>
+
+                    
+                <!--</div>
+
+
+                <div class="row">-->
+                    <div class="col-md-2">
+                        <label>Tipo IVA</label>
+                        <select class="form-control campo-edicion" name="txtIVA">
+                            <option value="">Seleccione</option>
+                            {% for iva in tiposiva %}
+                            <option value="{{iva.id}}">{{iva.concepto}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <label>Precio Costo</label>
+                        <input class="form-control campo-edicion" type="number" step="0.01" name="txtPrecioCosto" />
+                    </div>
+
+                    <br />
+                </div>
+                <div class="row">    
+                    <div class="col-md-2">
+                        <label>% Ganancia Minorista</label>
+                        <input class="form-control campo-edicion" type="number" step="0.01"
+                            name="txtPorcentajeGanancia" />
+                    </div>
+
+                    <div class="col-md-2">
+                        <label>Precio Minorista</label>
+                        <input class="form-control campo-edicion" type="number" step="0.01" name="txtPrecioMinorista" />
+                    </div>
+                <!--</div>
+
+
+
+                <div class="row">-->
+                    <div class="col-md-2">
+                        <label>% Ganancia Mayorista</label>
+                        <input class="form-control campo-edicion" type="number" step="0.01"
+                            name="txtPorcentajeGananciaMayorista" />
+                    </div>
+
+                    <div class="col-md-2">
+                        <label>Precio Mayorista</label>
+                        <input class="form-control campo-edicion" type="number" step="0.01" name="txtPrecioMayorista" />
+                    </div>
+
+                    <br />
+
+                    <div class="col-md-2">
+                        <label>Fecha Vencimiento</label>
+                        <input class="form-control campo-edicion" type="date" name="txtFechaVencimiento" />
+                    </div>
+
+                    <div class="col-md-2">
+                        <label>Fecha Última Carga</label>
+                        <input class="form-control campo-edicion" type="date" name="txtFechaUltimaCarga" />
+                    </div>
+                </div>
+
+                <br />
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Foto</label>
+                        <input class="form-control campo-edicion" type="file" name="txtFoto" />
+                    </div>
+
+                    <div class="col-md-3">
+                        <br />
+                        <input type="checkbox" name="txtActivo" value="1" /> Activo
+                    </div>
+
+                    <div class="col-md-3">
+                        <br />
+                        <input type="checkbox" name="txtOferta" value="1" /> Oferta
+                    </div>
+                </div>
+
+                <br />
+
+                <button class="btn btn-success">Guardar</button>
+                <a href="{{ url_for('entidades.articulos') }}" class="btn btn-primary">Regresar</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

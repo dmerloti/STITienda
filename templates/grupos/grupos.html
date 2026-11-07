@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container my-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Listado de Grupos de Artículos</h3>
+        <a href="{{url_for("soporte.create_grupo")}}" class="btn btn-success">Ingresar NUEVO Grupo</a>
+    </div>
+
+    <table class="table table-light table-striped align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Concepto</th>
+                <th>Activo</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for grupo in grupos %}
+            <tr>
+                <td>{{ grupo.id }}</td>
+                
+                <td>{{ grupo.concepto }}</td>
+                <td>{{ grupo.activo }}</td>
+                <td>
+                    <a class="btn btn-warning btn-sm"
+                    href="{{ url_for('soporte.edit_grupo', id=grupo.id) }}">
+                        Editar
+                    </a>
+
+                    <a class="btn btn-danger btn-sm"
+                    onclick="return confirm('¿Desea borrar el rubro?')"
+                    href="{{ url_for('soporte.destroy_grupo', id=grupo.id) }}">
+                        Eliminar
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

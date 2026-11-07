@@ -1,0 +1,514 @@
+rom flask import Flask
+from flask import render_template, request, redirect, url_for, flash
+from flask import send_from_directory
+from flask import session
+from functools import wraps
+import mysql.connector
+import os
+from mysql.connector import Error
+from datetime import datetime
+from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash, check_password_hash
+from database import get_db_connection
+
+from ges_seguridad.routes_seguridad import seguridad_bp
+from ges_tienda.routes_tienda import tienda_bp
+from ges_soporte.routes_soporte import soporte_bp
+from ges_entidades.routes_entidades import entidades_bp
+from ges_stock.routes_stock import stock_bp
+from ges_servicios.routes_servicios import servicios_bp
+from ges_ventas.routes_ventas import ventas_bp
+from ges_tesoro.routes_tesoro import tesoro_bp
+
+from ges_tablero.routes_tablero import tablero_bp
+
+
+app = Flask(__name__)
+app.secret_key = 'ClaveSecreta'
+
+# Registrar blueprints
+app.register_blueprint(servicios_bp)
+app.register_blueprint(soporte_bp)
+app.register_blueprint(stock_bp)
+app.register_blueprint(tablero_bp)
+app.register_blueprint(tienda_bp)
+app.register_blueprint(ventas_bp)
+
+
+# Uploads
+CARPETA = os.path.join(os.getcwd(), 'uploads')
+app.config['CARPETA'] = CARPETA
+os.makedirs(app.config['CARPETA'], exist_ok=True)
+
+@app.route('/uploads/<nombreFoto>')
+def uploads(nombreFoto):
+    return send_from_directory(app.config['CARPETA'], nombreFoto)
+
+
+
+# login
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        user = request.form['usuario']
+        password = request.form['password']
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        sql = """
+            SELECT u.*, r.concepto AS rol
+            FROM usuarios u
+            JOIN usuarios_roles r ON u.idrol = r.id
+            WHERE u.username = %s
+        """
+        cursor.execute(sql, (user,))
+        user_db = cursor.fetchone()
+        conn.close()
+
+        if user_db and check_password_hash(user_db['password'], password):
+            session['user'] = user_db['username']
+            session['idrol'] = user_db['idrol']
+            session['rol'] = user_db['rol']  # admin o vendedor
+            return redirect('/')
+        else:
+            flash("Usuario o contraseña incorrectos - Reintente")
+            return redirect('/login')
+
+    return render_template('login.html')
+
+
+# logout
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('tienda.index'))
+
+# proteger rutas
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+# Decorador para ADMIN
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user' not in session:
+            return redirect('/login')
+        if session.get('rol') != 'admin':
+            return redirect('/')
+        return f(*args, **kwargs)
+    return decorated_function
+
+# Panel de USUARIOS
+@app.route('/usuarios')
+@admin_required
+def usuarios():
+    conexion = get_db_connection()
+    cursor = conexion.cursor(dictionary=True)
+
+    sql = """
+        SELECT u.id, u.username, r.concepto AS rol
+        FROM usuarios u
+        JOIN usuarios_roles r ON u.idrol = r.id
+    """
+    cursor.execute(sql)
+    lista = cursor.fetchall()
+
+    conexion.close()
+
+    return render_template('usuarios/usuarios.html', usuarios=lista)
+
+
+# Crear USUARIOS
+@app.route('/usuarios/crear_usuario', methods=['GET', 'POST'])
+@admin_required
+def crear_usuario():
+
+    conexion = get_db_connection()
+    cursor = conexion.cursor(dictionary=True)
+
+    if request.method == 'POST':
+        username = request.form['username']
+        password = generate_password_hash(request.form['password'])
+        idrol = request.form['idrol']
+
+        sql = "INSERT INTO usuarios (username, password, idrol) VALUES (%s, %s, %s)"
+        cursor.execute(sql, (username, password, idrol))
+        conexion.commit()
+
+        conexion.close()
+        return redirect('/usuarios')
+
+    # Cargar roles para el combo
+    cursor.execute("SELECT * FROM usuarios_roles")
+    roles = cursor.fetchall()
+    conexion.close()
+
+    return render_template('usuarios/crear_usuario.html', roles=roles)
+
+
+# Editar USUARIO
+@app.route('/usuarios/editar_usuario/<int:id>', methods=['GET', 'POST'])
+@admin_required
+def editar_usuario(id):
+
+    conexion = get_db_connection()
+    cursor = conexion.cursor(dictionary=True)
+
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        idrol = request.form['idrol']
+
+        if password:
+            password_hash = generate_password_hash(password)
+            sql = "UPDATE usuarios SET username=%s, password=%s, idrol=%s WHERE id=%s"
+            cursor.execute(sql, (username, password_hash, idrol, id))
+        else:
+            sql = "UPDATE usuarios SET username=%s, idrol=%s WHERE id=%s"
+            cursor.execute(sql, (username, idrol, id))
+
+        conexion.commit()
+        conexion.close()
+
+        return redirect('/usuarios')
+
+    # Traer usuario
+    cursor.execute("SELECT * FROM usuarios WHERE id=%s", (id,))
+    usuario = cursor.fetchone()
+
+    # Traer roles
+    cursor.execute("SELECT * FROM usuarios_roles")
+    roles = cursor.fetchall()
+
+    conexion.close()
+
+    return render_template('usuarios/editar_usuario.html',
+                           usuario=usuario,
+                           roles=roles)
+
+
+# Eliminar USUARIO
+@app.route('/usuarios/eliminar/<int:id>')
+@admin_required
+def eliminar_usuario(id):
+    conexion = get_db_connection()
+    cursor = conexion.cursor()
+
+    cursor.execute("DELETE FROM usuarios WHERE id=%s", (id,))
+    conexion.commit()
+    conexion.close()
+
+    return redirect('/usuarios')
+
+# Registro Usuario CLIENTE
+@app.route('/registro', methods=['GET', 'POST'])
+def registro():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = generate_password_hash(request.form['password'])
+
+        conexion = get_db_connection()
+        cursor = conexion.cursor(dictionary=True)
+
+        # Buscar ID del rol cliente
+        cursor.execute("SELECT id FROM usuarios_roles WHERE concepto = %s", ('cliente',))
+        rol_cliente = cursor.fetchone()
+
+        if not rol_cliente:
+            flash("No existe el rol cliente en la base de datos.")
+            conexion.close()
+            return redirect('/registro')
+
+        idrol = rol_cliente['id']
+
+        # Insertar usuario nuevo
+        sql = "INSERT INTO usuarios (username, password, idrol) VALUES (%s, %s, %s)"
+        cursor.execute(sql, (username, password, idrol))
+        conexion.commit()
+        conexion.close()
+
+        flash("Usuario creado correctamente.")
+        return redirect(url_for('login'))
+
+    return render_template('usuarios/registro.html')
+
+
+# Crear USUARIOS a mano
+#@app.route('/crearusuario')
+#def crearusuario():
+
+    #conn = get_db_connection()
+    #cursor = conn.cursor(dictionary=True)
+        
+    # Crear usuario DANIEL
+    #username = "dmerlo"
+    #password = generate_password_hash("s7Inu3V0")
+    #rol = "admin"
+    #sql = "INSERT INTO usuarios (username, password, rol VALUES (%s, %s, %s)"
+    #cursor.execute(sql, (username, password))
+    #conn.commit()
+
+    # Crear usuario SILVANA
+    #username = "silfa"
+    #password = generate_password_hash("silfarrando")
+    #sql = "INSERT INTO usuarios (username, password) VALUES (%s, %s)"
+    #cursor.execute(sql, (username, password))
+    #conn.commit()
+
+    #cursor.close()
+    #conn.close()
+
+
+
+#INTRANET
+# Articulos
+@app.route('/articulos/articulos')
+@login_required
+def articulos():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM articulos;")
+    articulos=cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return render_template('articulos/articulos.html',articulos=articulos)
+
+# Create Articulo
+@app.route('/create_articulo')
+@login_required
+def create_articulo():
+    return render_template('articulos/create_articulo.html')
+
+@app.route('/guardar_articulo', methods=['POST'])
+@login_required
+def guardar_articulo():
+    _codigo = request.form['txtCodigo']
+    _concepto = request.form['txtConcepto']
+    _foto = request.files['txtFoto']
+
+    if _codigo == '' or _concepto == '' or _foto.filename == '':
+        flash('Recuerda llenar todos los campos')
+        return redirect(url_for('create_articulo'))
+
+    now = datetime.now()
+    tiempo = now.strftime("%Y%m%d%H%M%S")
+
+    filename = secure_filename(_foto.filename)
+    nuevoNombreFoto = f"{tiempo}_{filename}"
+
+    ruta_foto = os.path.join(app.config['CARPETA'], nuevoNombreFoto)
+    _foto.save(ruta_foto)
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    sql = """
+        INSERT INTO articulos (codigo, concepto, foto)
+        VALUES (%s, %s, %s)
+    """
+    cursor.execute(sql, (_codigo, _concepto, nuevoNombreFoto))
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return redirect(url_for('articulos'))
+
+
+# Eliminar Articulo
+@app.route('/destroy_articulo/<id>')
+@login_required
+def destroy(id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM articulos WHERE id = %s', (id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return redirect('/')
+
+# Editar Articulo
+@app.route('/edit_articulo/<id>')
+@login_required
+def edit(id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute('select * FROM articulos WHERE id = %s', (id,))
+    articulos=cursor.fetchall()
+    #conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return render_template('articulos/edit_articulo.html', articulos=articulos)
+
+# Actualizar Articulo
+@app.route('/actualizar_articulo', methods=["POST"])
+@login_required
+def update():
+    id = request.form['txtID']
+    _codigo = request.form['txtCodigo']
+    _concepto = request.form['txtConcepto']
+    _foto = request.files['txtFoto']
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # Si hay foto nueva
+    if _foto and _foto.filename != '':
+        now = datetime.now()
+        tiempo = now.strftime("%Y%H%M%S")
+        nuevoNombreFoto = tiempo + _foto.filename
+        _foto.save(os.path.join(app.config['CARPETA'], nuevoNombreFoto))
+
+        # Borrar foto anterior
+        cursor.execute("SELECT foto FROM articulos WHERE id=%s", (id,))
+        fila = cursor.fetchone()
+        if fila and fila['foto']:
+            ruta_foto = os.path.join(app.config['CARPETA'], fila['foto'])
+            if os.path.exists(ruta_foto):
+                os.remove(ruta_foto)
+
+        sql = """
+            UPDATE articulos
+            SET codigo=%s, concepto=%s, foto=%s
+            WHERE id=%s
+        """
+        datos = (_codigo, _concepto, nuevoNombreFoto, id)
+
+    # Si NO se cambia la foto
+    else:
+        sql = """
+            UPDATE articulos
+            SET codigo=%s, concepto=%s
+            WHERE id=%s
+        """
+        datos = (_codigo, _concepto, id)
+
+    cursor.execute(sql, datos)
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return redirect(url_for('articulos'))
+
+# Rubros
+@app.route('/rubros/rubros')
+@login_required
+def rubros():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM rubros;")
+    rubros=cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return render_template('rubros/rubros.html',rubros=rubros)
+
+
+# Create Rubro
+@app.route('/create_rubro')
+@login_required
+def create_rubro():
+    return render_template('rubros/create_rubro.html')
+
+@app.route('/guardar_rubro', methods=['POST'])
+@login_required
+def guardar_rubro():
+    _concepto = request.form['txtConcepto']
+
+    if _concepto == '':
+        flash('Recuerda llenar todos los campos')
+        return redirect(url_for('create_rubro'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    sql = """
+        INSERT INTO rubros (concepto)
+        VALUES (%s)
+    """
+    cursor.execute(sql, (_concepto,))
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return redirect(url_for('rubros'))
+
+
+# Eliminar Rubro
+@app.route('/destroy_rubro/<id>')
+@login_required
+def destroy_rubro(id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM rubros WHERE id = %s', (id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return redirect('/rubros/rubros')
+
+# Editar rubro
+@app.route('/edit_rubro/<id>')
+@login_required
+def edit_rubro(id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute('select * FROM rubros WHERE id = %s', (id,))
+    rubros=cursor.fetchall()
+    #conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return render_template('rubros/edit_rubro.html', rubros=rubros)
+
+# Actualizar Rubro
+@app.route('/actualizar_rubro', methods=["POST"])
+@login_required
+def actualizar_rubro():
+    id = request.form['txtID']
+    _concepto = request.form['txtConcepto']
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    sql = """
+            UPDATE rubros
+            SET concepto=%s
+            WHERE id=%s
+        """
+    datos = (_concepto, id)
+
+    cursor.execute(sql, datos)
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return redirect(url_for('rubros'))
+
+
+@app.route('/proveedores')
+@login_required
+def proveedores():
+    return "Proveedores en construcción"
+
+@app.route('/marcas')
+@login_required
+def marcas():
+    return "Marcas en construcción"
+
+
+
+
+
+if __name__=='__main__':
+    app.run(debug=True)

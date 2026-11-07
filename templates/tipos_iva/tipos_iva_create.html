@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container my-4">
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-danger">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <form method="post" action="{{ url_for('soporte.guardar_tipo_iva') }}">
+        <div class="card">
+            <div class="card-header">
+                Ingresar Tipo de Iva
+            </div>
+
+            <div class="card-body">
+
+                <div class="mb-3">
+                    <label class="form-label">Concepto</label>
+                    <input class="form-control campo-edicion" type="text" name="txtConcepto">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Alícuota</label>
+                    <input class="form-control campo-edicion" type="text" name="txtAlicuota">
+                </div>
+
+                <button type="submit" class="btn btn-success">Guardar</button>
+                <a href="{{ url_for('soporte.tipos_iva') }}" class="btn btn-primary">Regresar</a>
+
+            </div>
+        </div>
+    </form>
+
+</div>
+
+{% endblock %}

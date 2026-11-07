@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% for articulo in articulos  %}
+
+<form method="post" action="/actualizar_articulo" enctype="multipart/form-data">
+
+    <div class="card">
+        <div class="card-header">
+            EDITAR Artículo
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Datos del Artículo</h5>
+            <p class="card-text">
+                <div class="form-group">
+                    <input type="hidden" value="{{articulo.id}}" name="txtID" id="txtID">
+                </div>    
+
+                <div class="form-group">
+                    <label for="txtCodigo">Código:</label>
+                    <input id="txtCodigo" value="{{articulo.codigo}}" class="form-control campo-edicion" type="text" name="txtCodigo">
+                </div> 
+                <br>
+               
+                <div class="form-group">
+                    <label for="txtConcepto">Concepto:</label>
+                    <input id="txtConcepto" value="{{articulo.concepto}}" class="form-control campo-edicion" type="text" name="txtConcepto">
+                </div>
+
+                <div class="form-group">
+                    <label for="txtFoto">Foto:</label>
+                    <img id="preview"
+                    src="{{ url_for('uploads', nombreFoto=articulo.foto) }}"
+                        width="150"
+                        class="img-thumbnail">       
+
+                    <input id="txtFoto" class="form-control" type="file" name="txtFoto">
+                </div>
+                <br>
+               
+                
+                <br><br>
+                
+                <div class="form-group">
+                    <input type="submit" class="btn btn-success" value="Guardar">
+                        <a href="{{url_for('entidades.articulos')}}" class="btn btn-primary">Regresar</a>
+                </div>
+            </p>
+        </div>
+    </div> 
+        
+</form>
+
+<script>
+    document.getElementById("txtFoto").addEventListener("change", function (event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+            document.getElementById("preview").src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>   
+  
+{% endfor %}
+
+{% endblock %}

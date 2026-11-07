@@ -1,0 +1,209 @@
+{% extends 'base.html' %} {% block content %}
+
+<form method="post" action="{{ url_for('entidades.cliente_update') }}">
+  <div class="card">
+    <div class="card-header">EDITAR Cliente</div>
+
+    <div class="card-body">
+      <h5 class="card-title">Datos del Cliente</h5>
+
+      <input type="hidden" value="{{cliente.id}}" name="txtID" />
+
+      <div class="form-group">
+        <label for="txtConcepto">Concepto:</label>
+        <input
+          id="txtConcepto"
+          value="{{cliente.concepto}}"
+          class="form-control campo-edicion"
+          type="text"
+          name="txtConcepto"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="txtCelular">Celular:</label>
+        <input
+          id="txtCelular"
+          value="{{cliente.celular}}"
+          class="form-control campo-edicion"
+          type="text"
+          name="txtCelular"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="txtMail">Mail:</label>
+
+        <input
+          id="txtMail"
+          class="form-control campo-edicion"
+          type="email"
+          name="txtMail"
+          value="{{ cliente.mail if cliente else '' }}"
+          placeholder="ejemplo@email.com"
+        />
+
+        <small id="errorMail" class="text-danger"></small>
+      </div>
+
+      <div class="form-group">
+        <label>Localidad</label>
+
+        <select class="form-control campo-edicion" name="txtLocalidad">
+          {% for l in localidades %}
+
+          <option
+            value="{{l.id}}"
+            {%
+            if
+            l.id=="cliente.idlocali"
+            %}selected{%
+            endif
+            %}
+          >
+            {{l.concepto}}
+          </option>
+
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="txtDireccion">Direccion:</label>
+        <input
+          id="txtDireccion"
+          value="{{cliente.direccion}}"
+          class="form-control campo-edicion"
+          type="text"
+          name="txtDireccion"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Tipo Contribuyente Fiscal:</label>
+
+        <select class="form-control campo-edicion" name="txtTipoContribuyente">
+          {% for t in tipos %}
+
+          <option
+            value="{{t.id}}"
+            {%
+            if
+            t.id=="cliente.idtipocontribuyente"
+            %}selected{%
+            endif
+            %}
+          >
+            {{t.concepto}}
+          </option>
+
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="txtCuit">CUIT:</label>
+
+        <input
+          id="txtCuit"
+          class="form-control campo-edicion"
+          type="text"
+          name="txtCuit"
+          value="{{ cliente.cuit if cliente else '' }}"
+        />
+
+        <small id="errorCuit" class="text-danger"></small>
+      </div>
+
+      <div class="form-group mt-3">
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            name="txtActivo"
+            value="1"
+            {% if cliente.activo == 1 %}checked{% endif %}
+          />
+
+          <label class="form-check-label"> Activo </label>
+        </div>
+      </div>
+
+      <br />
+
+      <div class="form-group">
+        <input type="submit" class="btn btn-success" value="Guardar" />
+        <a href="{{url_for('entidades.clientes')}}" class="btn btn-primary"
+          >Regresar</a
+        >
+      </div>
+    </div>
+  </div>
+</form>
+
+<script>
+  function validarCUIT(cuit) {
+    cuit = cuit.replace(/-/g, "");
+
+    if (cuit.length != 11) return false;
+
+    let mult = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
+    let total = 0;
+
+    for (let i = 0; i < 10; i++) {
+      total += parseInt(cuit[i]) * mult[i];
+    }
+
+    let resto = total % 11;
+    let digito = resto == 0 ? 0 : resto == 1 ? 9 : 11 - resto;
+
+    return digito == cuit[10];
+  }
+
+  document.getElementById("txtCuit").addEventListener("blur", function () {
+    let cuit = this.value;
+    let error = document.getElementById("errorCuit");
+
+    if (cuit === "") {
+      error.innerText = "";
+      return;
+    }
+
+    if (!validarCUIT(cuit)) {
+      error.innerText = "CUIT inválido";
+      this.classList.add("is-invalid");
+    } else {
+      error.innerText = "";
+      this.classList.remove("is-invalid");
+    }
+  });
+</script>
+
+<script>
+  function validarMail(mail) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    return regex.test(mail);
+  }
+
+  document.getElementById("txtMail").addEventListener("blur", function () {
+    let mail = this.value;
+    let error = document.getElementById("errorMail");
+
+    if (mail === "") {
+      error.innerText = "";
+      this.classList.remove("is-invalid");
+      return;
+    }
+
+    if (!validarMail(mail)) {
+      error.innerText = "Mail inválido";
+      this.classList.add("is-invalid");
+    } else {
+      error.innerText = "";
+      this.classList.remove("is-invalid");
+    }
+  });
+</script>
+
+{% endblock %}

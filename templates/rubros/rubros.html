@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container my-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Listado de Rubros</h3>
+        <a href="{{url_for("soporte.create_rubro")}}" class="btn btn-success">Ingresar NUEVO Rubro</a>
+    </div>
+
+    <table class="table table-light table-striped align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Concepto</th>
+                <th>Activo</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for rubro in rubros %}
+            <tr>
+                <td>{{ rubro.id }}</td>
+                
+                <td>{{ rubro.concepto }}</td>
+                <td>{{ rubro.activo }}</td>
+                <td>
+                    <a class="btn btn-warning btn-sm"
+                    href="{{ url_for('soporte.edit_rubro', id=rubro.id) }}">
+                        Editar
+                    </a>
+
+                    <a class="btn btn-danger btn-sm"
+                    onclick="return confirm('¿Desea borrar el rubro?')"
+                    href="{{ url_for('soporte.destroy_rubro', id=rubro.id) }}">
+                        Eliminar
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

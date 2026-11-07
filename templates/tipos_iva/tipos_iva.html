@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container my-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Listado de Tipos de Iva de Artículos</h3>
+        <a href="{{url_for("soporte.create_tipo_iva")}}" class="btn btn-success">Ingresar NUEVO Tipo de Iva</a>
+    </div>
+
+    <table class="table table-light table-striped align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Concepto</th>
+                <th>Alícuota</th>
+                <th>Activo</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for tipoiva in tiposiva %}
+            <tr>
+                <td>{{ tipoiva.id }}</td>
+                
+                <td>{{ tipoiva.concepto }}</td>
+                <td>{{ tipoiva.alicuota }}</td>
+                <td>{{ tipoiva.activo }}</td>
+                <td>
+                    <a class="btn btn-warning btn-sm"
+                    href="{{ url_for('soporte.edit_tipo_iva', id=tipoiva.id) }}">
+                        Editar
+                    </a>
+
+                    <a class="btn btn-danger btn-sm"
+                    onclick="return confirm('¿Desea borrar el Tipo de Iva?')"
+                    href="{{ url_for('soporte.destroy_tipo_iva', id=tipoiva.id) }}">
+                        Eliminar
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,35 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Entornos virtuales
+venv/
+.venv/
+env/
+
+# Editores
+.vscode/
+.idea/
+
+# Backups
+backups/
+
+# Archivos subidos
+uploads/
+
+# Configuracion privada
+.env
+.env.*
+!.env.example
+
+# Logs y temporales
+*.log
+*.tmp
+*.bak
+*.old
+
+# Archivos del sistema
+Thumbs.db
+.DS_Store

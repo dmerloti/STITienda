@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container my-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Listado de Localidades</h3>
+        <a href="{{url_for("soporte.create_localidad")}}" class="btn btn-success">Ingresar NUEVA Localidad</a>
+    </div>
+
+    <table class="table table-light table-striped align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Concepto</th>
+                <th>Código Postal</th>
+                <th>Activo</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for localidad in localidades %}
+            <tr>
+                <td>{{ localidad.id }}</td>
+                
+                <td>{{ localidad.concepto }}</td>
+                <td>{{ localidad.cp }}</td>
+                <td>{{localidad.activo }}</td>
+                <td>
+                    <a class="btn btn-warning btn-sm"
+                    href="{{ url_for('soporte.edit_localidad', id=localidad.id) }}">
+                        Editar
+                    </a>
+
+                    <a class="btn btn-danger btn-sm"
+                    onclick="return confirm('¿Desea borrar el pais?')"
+                    href="{{ url_for('soporte.destroy_localidad', id=localidad.id) }}">
+                        Eliminar
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

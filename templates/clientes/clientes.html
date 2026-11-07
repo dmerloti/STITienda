@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container my-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Listado de Clientes</h3>
+        <a href="{{url_for("entidades.cliente_create")}}" class="btn btn-success">Ingresar NUEVO Cliente</a>
+    </div>
+
+    <table class="table table-light table-striped align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Cuit</th>
+                <th>Concepto</th>
+                <th>Celular</th>
+                <th>Tipo Contribuyente Fiscal</th>
+                <th>Dirección</th>
+                <th>Localidad</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for cliente in clientes %}
+            <tr>
+                <td>{{ cliente.id }}</td>
+                
+                <td>{{ cliente.cuit }}</td>
+                <td>{{ cliente.concepto }}</td>
+                <td>{{ cliente.celular }}</td>
+                <td>{{ cliente.tipo_contribuyente }}</td>
+                <td>{{ cliente.direccion }}</td>
+                <td>{{ cliente.localidad }}</td>
+                <td>
+                    <a class="btn btn-warning btn-sm" href="{{ url_for('entidades.cliente_edit', id=cliente.id) }}">
+                        Editar
+                    </a>
+                    <a class="btn btn-danger btn-sm"
+                       onclick="return confirm('¿Desea borrar el Cliente?')"
+                       href="{{ url_for('entidades.cliente_destroy', id=cliente.id) }}">
+                        Eliminar
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

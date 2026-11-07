@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-5" style="max-width: 400px;">
+    <h3 class="text-center mb-4">Crear Cuenta</h3>
+
+    <form method="POST">
+        <div class="mb-3">
+            <label>Usuario</label>
+            <input type="text" name="username" class="form-control campo-edicion" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Contraseña</label>
+            <input type="password" name="password" class="form-control campo-edicion" required>
+        </div>
+
+        <button type="submit" class="btn btn-dark w-100">
+            Registrarse
+        </button>
+    </form>
+</div>
+
+{% endblock %}

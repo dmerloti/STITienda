@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% for provincia in provincias  %}
+
+<form method="post" action="{{ url_for('soporte.actualizar_provincia') }}" enctype="multipart/form-data">
+
+    <div class="card">
+        <div class="card-header">
+            EDITAR Provincia
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Datos de la Provincia</h5>
+            <p class="card-text">
+                <div class="form-group">
+                    <input type="hidden" value="{{provincia.id}}" name="txtID" id="txtID">
+                </div>    
+
+                <div class="form-group">
+                    <label for="txtConcepto">Concepto:</label>
+                    <input id="txtConcepto" value="{{provincia.concepto}}" class="form-control campo-edicion" type="text" name="txtConcepto">
+                </div>
+
+                <div class="form-group mt-3">
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="checkbox" 
+                            name="txtActivo" 
+                            id="txtActivo"
+                            value="1"
+                            {% if provincia.activo == 1 %}checked{% endif %}
+                        >
+                        <label class="form-check-label" for="txtActivo">
+                            Activo
+                        </label>
+                    </div>
+                </div>
+
+                <br><br>
+                
+                <div class="form-group">
+                    <input type="submit" class="btn btn-success" value="Guardar">
+                        <a href="{{url_for('soporte.provincias')}}" class="btn btn-primary">Regresar</a>
+                </div>
+            </p>
+        </div>
+    </div> 
+        
+</form>
+
+<script>
+    document.getElementById("txtFoto").addEventListener("change", function (event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+            document.getElementById("preview").src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>   
+  
+{% endfor %}
+
+{% endblock %}

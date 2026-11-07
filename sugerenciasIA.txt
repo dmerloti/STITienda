@@ -1,0 +1,7 @@
+página detalle de producto
+
+🛒 carrito real con sesión
+
+🖼️ galería de imágenes por artículo
+
+📱 optimizar cards mobile

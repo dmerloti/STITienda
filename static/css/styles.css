@@ -1,0 +1,542 @@
+/* FOOTER GRANDE */
+
+.footer-big {
+    border-top: 1px solid #e5e5e5;
+    padding: 70px 0 30px 0;
+    background-color: #fff;
+    font-size: 16px;
+}
+
+.footer-logo-big {
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: 3px;
+}
+
+.footer-sub-big {
+    font-size: 14px;
+    letter-spacing: 6px;
+    margin-top: -5px;
+}
+
+.footer-title {
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.footer-links li {
+    margin-bottom: 8px;
+}
+
+.footer-links a {
+    text-decoration: none;
+    color: #000;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.social-icon-big {
+    width: 42px;
+    height: 42px;
+    background: #000;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.footer-bottom-big {
+    text-align: center;
+    font-size: 14px;
+    color: #777;
+    margin-top: 50px;
+}
+
+footer.footer-big {
+    font-size: 20px !important;
+}
+
+footer.footer-big h5 {
+    font-size: 22px !important;
+}
+
+footer.footer-big p,
+footer.footer-big a {
+    font-size: 18px !important;
+}
+
+.footer-logo-big {
+    font-size: 56px !important;
+}
+
+.footer-sub-big {
+    font-size: 16px !important;
+    letter-spacing: 6px;
+}
+
+.footer-bottom-big {
+    font-size: 16px !important;
+}
+
+/* FOOTER GENERAL */
+.footer-big {
+    width: 100%;
+    background: #fff;
+    border-top: 1px solid #e5e5e5;
+    font-size: 18px; /* ⬅️ tamaño base del footer */
+}
+
+/* LOGO */
+.footer-logo-big {
+    font-size: 56px;
+    font-weight: bold;
+    letter-spacing: 3px;
+}
+
+.footer-sub-big {
+    font-size: 16px;
+    letter-spacing: 5px;
+}
+
+/* TITULOS */
+.footer-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* LINKS */
+.footer-links li {
+    margin-bottom: 8px;
+}
+
+.footer-links a {
+    text-decoration: none;
+    color: #000;
+    font-size: 18px;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+/* REDES */
+.social-icon-big {
+    width: 46px;
+    height: 46px;
+    background: #000;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* PIE FINAL */
+.footer-bottom-big {
+    text-align: center;
+    font-size: 16px;
+    color: #777;
+    margin-top: 40px;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.map-responsive {
+    width: 100%;
+    height: 450px;
+}
+
+.map-responsive iframe {
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+}
+
+.map-full {
+    width: 100%;
+    height: 480px;
+}
+
+.map-full iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+
+/* FOOTER PASTEL */
+.footer-big {
+    background-color: #eef2f6; /* pastel suave */
+    color: #333;
+    border-top: 1px solid #d6dbe0;
+}
+
+.footer-title {
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #222;
+}
+
+.footer-links li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-links a {
+    text-decoration: none;
+    color: #555;
+    transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+.footer-logo-big {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.footer-bottom-big {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #d6dbe0;
+    font-size: 0.9rem;
+    text-align: center;
+    color: #666;
+}
+.footer-big {
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.03);
+}
+
+.social-icon-header {
+    width: 38px;
+    height: 38px;
+    background: #000;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Mobile: ocultar redes si molesta */
+@media (max-width: 768px) {
+    .social-icon-header {
+        display: none;
+    }
+}
+/* ICONOS HEADER */
+.social-icon-header {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+/* Colores reales */
+.social-icon-header.whatsapp { background: #25D366; }
+.social-icon-header.instagram {
+    background: radial-gradient(circle at 30% 107%,
+        #fdf497 0%, #fdf497 5%, #fd5949 45%,
+        #d6249f 60%, #285AEB 90%);
+}
+.social-icon-header.facebook { background: #1877F2; }
+
+/* Hover animado */
+.social-icon-header:hover {
+    transform: translateY(-4px) scale(1.08);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .social-icon-header {
+        display: none;
+    }
+}
+.sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    background: #fff;
+    transition: box-shadow 0.3s ease;
+}
+
+/* sombra al scrollear */
+.sticky-header.scrolled {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.footer-big {
+    width: 100%;
+}
+
+.footer-big .row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.map-footer iframe {
+    width: 100%;
+    height: 180px;
+    border: 0;
+    border-radius: 8px;
+}
+/* Centrar logo del footer */
+.footer-big .footer-logo-big,
+.footer-big .footer-sub-big {
+    text-align: center;
+}
+
+.footer-big .col-md-3:first-child {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer-big .col-md-3:first-child {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .footer-big .col-md-3:first-child {
+        text-align: center;
+    }
+}
+/* HEADER GRID */
+.header-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+}
+
+/* Logo centrado */
+.header-grid img {
+    justify-self: center;
+}
+
+/* Redes a la derecha */
+.header-grid .d-flex {
+    justify-self: end;
+}
+@media (max-width: 768px) {
+    .header-grid img {
+        max-width: 200px;
+    }
+}
+
+.footer-links li,
+.footer-big p {
+    font-size: 16px;
+}
+
+.footer-title {
+    font-size: 20px;
+}
+.footer-links li,
+.footer-big p {
+    line-height: 1.4;
+}
+.btn i {
+    transition: transform 0.2s ease;
+}
+
+.btn:hover i {
+    transform: translateX(-2px);
+}
+.btn span {
+    font-weight: 600;
+}
+.bg-site {
+    background-color: #eef2f6;
+}
+.sticky-header {
+    border-bottom: 1px solid #d6dbe0;
+}
+.sticky-header {
+    transition: padding 0.3s ease;
+}
+
+.sticky-header.scrolled {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+}
+.btn-comprar {
+    background-color: #0d6efd;   /* Azul Bootstrap */
+    color: #fff;
+    border: none;
+    font-weight: 600;
+    padding: 8px 16px;
+}
+
+.btn-comprar:hover {
+    background-color: #0b5ed7;   /* Azul más oscuro */
+    color: #fff;
+}
+.card-img-top {
+    background-color: #f8f9fa;
+    padding: 10px;
+}
+
+#sidebar {
+    font-size: 1.3rem;
+}
+
+/* =========================================================
+   SUBMENÚS DEL NAVBAR - TABLAS
+   ========================================================= */
+
+.dropdown-submenu {
+    position: relative;
+}
+
+/* Oculto por defecto */
+.dropdown-submenu > .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 100%;
+    margin-top: 0;
+    margin-left: 0;
+}
+
+/* Mostrar cuando está activo */
+.dropdown-submenu.show > .dropdown-menu {
+    display: block;
+}
+
+/* Flecha hacia la derecha */
+.dropdown-submenu > .dropdown-toggle::after {
+    float: right;
+    margin-top: 7px;
+}
+
+/* Mejor separación visual */
+.dropdown-submenu > .dropdown-menu {
+    min-width: 220px;
+}
+
+/* Evita que el menú principal se cierre visualmente */
+.navbar .dropdown-menu {
+    z-index: 1050;
+}
+
+/* En pantallas chicas */
+@media (max-width: 767.98px) {
+
+    .dropdown-submenu > .dropdown-menu {
+        position: static;
+        margin-left: 15px;
+        margin-top: 0;
+        box-shadow: none;
+    }
+}
+
+/* =========================================================
+   CAMPOS DE EDICIÓN - FONDO BEIGE PASTEL
+   Usar: class="form-control campo-edicion"
+   ========================================================= */
+
+.campo-edicion {
+    background-color: #fff8e7 !important;
+    border: 1px solid #e3d5b8;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+/* Cuando el campo recibe el foco */
+.campo-edicion:focus {
+    background-color: #fff3d6 !important;
+    border-color: #cdbb96;
+    box-shadow: 0 0 0 0.20rem rgba(205, 187, 150, 0.20);
+}
+
+/* Texto de los campos */
+.campo-edicion::placeholder {
+    color: #9b927f;
+}
+
+/* =========================================================
+   COTIZACIÓN DÓLAR EN NAVBAR
+   ========================================================= */
+
+.cotizacion-dolar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 5px 12px;
+    border-left: 1px solid rgba(255, 255, 255, 0.25);
+    color: #fff;
+    font-size: 0.82rem;
+    white-space: nowrap;
+}
+
+.dolar-titulo {
+    font-weight: 600;
+}
+
+.dolar-titulo i {
+    margin-right: 4px;
+}
+
+.dolar-compra,
+.dolar-venta {
+    color: #dcdcdc;
+}
+
+.dolar-compra strong,
+.dolar-venta strong {
+    color: #fff;
+    font-weight: 600;
+}
+
+
+/* En pantallas chicas */
+@media (max-width: 767px) {
+
+    .cotizacion-dolar {
+        margin-top: 8px;
+        margin-bottom: 8px;
+        border-left: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.25);
+        padding-top: 10px;
+        flex-wrap: wrap;
+    }
+
+}
+
+/* Cotización del dólar en el encabezado */
+.cotizacion-dolar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background-color: #212529;
+    color: #ffffff2f;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 11px;
+}
+
+.cotizacion-dolar .dolar-titulo {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.cotizacion-dolar .dolar-compra,
+.cotizacion-dolar .dolar-venta {
+    color: #e0e0e0;
+}
+
+.cotizacion-dolar strong {
+    color: #ffffff;
+    font-weight: bold;
+}

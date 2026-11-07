@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container my-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Listado de Tipos de Contribuyente Fiscal</h3>
+        <a href="{{url_for("soporte.create_tipos_contribuyente")}}" class="btn btn-success">Ingresar NUEVO Tipo de Contribuyente Fiscal</a>
+    </div>
+
+    <table class="table table-light table-striped align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Concepto</th>
+                <th>Activo</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for tipoContribuyente in tiposContribuyente %}
+            <tr>
+                <td>{{ tipoContribuyente.id }}</td>
+                
+                <td>{{ tipoContribuyente.concepto }}</td>
+                <td>{{tipoContribuyente.activo }}</td>
+                <td>
+                    <a class="btn btn-warning btn-sm"
+                    href="{{ url_for('soporte.edit_tipos_contribuyente', id=tipoContribuyente.id) }}">
+                        Editar
+                    </a>
+
+                    <a class="btn btn-danger btn-sm"
+                    onclick="return confirm('¿Desea borrar el pais?')"
+                    href="{{ url_for('soporte.destroy_tipos_contribuyente', id=tipoContribuyente.id) }}">
+                        Eliminar
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

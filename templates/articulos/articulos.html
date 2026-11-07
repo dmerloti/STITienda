@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container my-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Listado de Artículos</h3>
+        <a href="{{url_for("entidades.create_articulo")}}" class="btn btn-success">Ingresar NUEVO Artículo</a>
+    </div>
+
+    <table class="table table-light table-striped align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Imagen</th>
+                <th>Código</th>
+                <th>Concepto</th>
+                <th>Existencia</th>
+                <th>Punto Reposición</th>
+                <th>Precio Costo</th>
+                <th>Precio Minorista</th>
+                <th>Precio Mayorista</th>
+                <th>Rubro</th>
+                <th>¿Es Oferta?</th>
+                <th>¿Está Activo?</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for articulo in articulos %}
+            <tr>
+                <td>{{ articulo.id }}</td>
+                <td>
+                <img class="img-thumbnail" width="100"
+                src="{{ url_for('uploads', nombreFoto=articulo.foto) }}"
+                alt="Imagen del artículo">
+                </td>
+                <td>{{ articulo.codigo }}</td>
+                <td>{{ articulo.concepto }}</td>
+
+                <td>{{ articulo.existencia }}</td>
+                <td>{{ articulo.ptoReposicion }}</td>
+                <td>${{ "{:,.0f}".format(articulo.precioCosto) }}</td>
+                <td>${{ "{:,.0f}".format(articulo.precontado) }}</td>
+                <td>${{ "{:,.0f}".format(articulo.precioVentaMayorista) }}</td>
+                <td>{{ articulo.rubro }}</td>
+                <td>{{ articulo.oferta }}</td>
+                <td>{{ articulo.activo }}</td>
+                <td>
+                    <a class="btn btn-warning btn-sm" href="{{ url_for('entidades.edit', id=articulo.id) }}">    
+                        Editar
+                    </a>
+                    <a class="btn btn-danger btn-sm"
+                       onclick="return confirm('¿Desea borrar el artículo?')"
+                       href="/destroy_articulo/{{ articulo.id }}">
+                        Eliminar
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

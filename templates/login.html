@@ -1,0 +1,37 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5" style="max-width:400px">
+
+    <h3 class="mb-3">Iniciar sesión</h3>
+
+    <form method="post">
+        <div class="mb-3">
+            <label>Usuario</label>
+            <input class="form-control campo-edicion" name="usuario">
+        </div>
+
+        <div class="mb-3">
+            <label>Contraseña</label>
+            <input type="password" class="form-control campo-edicion" name="password">
+        </div>
+
+        <button class="btn btn-primary w-100">Ingresar</button>
+        <div class="text-center mt-3">
+                <a href="{{ url_for('seguridad.registro') }}">
+                    ¿No tenés cuenta? Crear usuario
+                </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
