@@ -7,25 +7,66 @@ from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
 from ges_seguridad.routes_seguridad import login_required
+from flask import current_app
 
 entidades_bp = Blueprint('entidades', __name__)
 
 #app = Flask(__name__)
 
 
-
 # Articulos
 @entidades_bp.route('/articulos/articulos')
 @login_required
 def articulos():
+
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("select a.id, a.codigo, a.codigoBarras, a.concepto, a.foto, a.precio, a.precioCosto, a.precontado, a.precioVentaMayorista, a.oferta, a.activo, a.existencia, a.puntoReposicion, a.porcentajeGanancia, a.porcentajeGananciaMayorista, a.idrubro, r.concepto as rubro from articulos a left join articulos_rubros r on a.idrubro=r.id  ;")
-    articulos=cursor.fetchall()
+
+    # Listado de artículos
+    cursor.execute("""
+        SELECT
+            a.id,
+            a.codigo,
+            a.codigoBarras,
+            a.concepto,
+            a.foto,
+            a.precio,
+            a.precioCosto,
+            a.precontado,
+            a.precioVentaMayorista,
+            a.oferta,
+            a.activo,
+            a.existencia,
+            a.puntoReposicion,
+            a.porcentajeGanancia,
+            a.porcentajeGananciaMayorista,
+            a.idrubro,
+            r.concepto AS rubro
+        FROM articulos a
+        LEFT JOIN articulos_rubros r ON a.idrubro = r.id
+        ORDER BY a.concepto
+    """)
+
+    articulos = cursor.fetchall()
+
+    # Rubros para el filtro
+    cursor.execute("""
+        SELECT id, concepto
+        FROM articulos_rubros
+        WHERE activo = 1
+        ORDER BY concepto
+    """)
+
+    rubros = cursor.fetchall()
+ 
     cursor.close()
     conn.close()
 
-    return render_template('articulos/articulos.html',articulos=articulos)
+    return render_template(
+        'articulos/articulos.html',
+        articulos=articulos,
+        rubros=rubros
+    )
 
 # Create Articulo
 @entidades_bp.route('/create_articulo')
@@ -57,39 +98,146 @@ def create_articulo():
         unidades=unidades,
         tiposiva=tiposiva
     )
+
 @entidades_bp.route('/guardar_articulo', methods=['POST'])
 @login_required
 def guardar_articulo():
-    _codigo = request.form['txtCodigo']
-    _concepto = request.form['txtConcepto']
-    _foto = request.files['txtFoto']
 
-    if _codigo == '' or _concepto == '' or _foto.filename == '':
-        flash('Recuerda llenar todos los campos')
-        return redirect(url_for('create_articulo'))
+    # Datos generales
+    codigo = request.form.get('txtCodigo')
+    codigoBarras = request.form.get('txtCodigoBarras') or None
+    concepto = request.form.get('txtConcepto')
+    descripcion = request.form.get('txtDescripcion') or None
 
-    now = datetime.now()
-    tiempo = now.strftime("%Y%m%d%H%M%S")
+    # Relaciones
+    idrubro = request.form.get('txtRubro') or None
+    idproveedor = request.form.get('txtProveedor') or None
+    idmarca = request.form.get('txtMarca') or None
+    idumedida = request.form.get('txtUnidad') or None
+    idtipoiva = request.form.get('txtIVA') or None
 
-    filename = secure_filename(_foto.filename)
-    nuevoNombreFoto = f"{tiempo}_{filename}"
+    # Cantidades y precios
+    puntoReposicion = request.form.get('txtPuntoReposicion') or None
+    existencia = request.form.get('txtExistencia') or 0
+    dolar = request.form.get('txtDolar') or None
+    precio = request.form.get('txtPrecio') or None
+    precioCosto = request.form.get('txtPrecioCosto') or None
 
-    ruta_foto = os.path.join(app.config['CARPETA'], nuevoNombreFoto)
-    _foto.save(ruta_foto)
+    # Ganancias y precios de venta
+    porcentajeGanancia = request.form.get('txtPorcentajeGanancia') or None
+    precontado = request.form.get('txtPrecioMinorista') or None
+    porcentajeGananciaMayorista = request.form.get('txtPorcentajeGananciaMayorista') or None
+    precioVentaMayorista = request.form.get('txtPrecioMayorista') or None
+
+    # Fechas
+    fechaVencimiento = request.form.get('txtFechaVencimiento') or None
+    fechaUltimaCarga = request.form.get('txtFechaUltimaCarga') or None
+
+    # Casillas
+    activo = 1 if request.form.get('txtActivo') else 0
+    oferta = 1 if request.form.get('txtOferta') else 0
+
+    # Validaciones
+    if not codigo or not concepto:
+        flash('Debe ingresar el código y el concepto del artículo.')
+        return redirect(url_for('entidades.create_articulo'))
 
     conn = get_db_connection()
     cursor = conn.cursor()
-    sql = """
-        INSERT INTO articulos (codigo, concepto, foto)
-        VALUES (%s, %s, %s)
-    """
-    cursor.execute(sql, (_codigo, _concepto, nuevoNombreFoto))
-    conn.commit()
 
-    cursor.close()
-    conn.close()
+    try:
+        # Foto opcional
+        foto = request.files.get('txtFoto')
+        nuevoNombreFoto = None
 
-    return redirect(url_for('articulos'))
+        if foto and foto.filename:
+            now = datetime.now()
+            tiempo = now.strftime("%Y%m%d%H%M%S")
+            filename = secure_filename(foto.filename)
+            nuevoNombreFoto = f"{tiempo}_{filename}"
+
+            ruta_foto = os.path.join(
+                current_app.config['CARPETA'],
+                nuevoNombreFoto
+            )
+
+            foto.save(ruta_foto)
+
+        sql = """
+            INSERT INTO articulos (
+                codigo,
+                codigoBarras,
+                concepto,
+                descripcion,
+                idrubro,
+                idproveedor,
+                idmarca,
+                puntoReposicion,
+                existencia,
+                idumedida,
+                dolar,
+                precio,
+                idtipoiva,
+                precioCosto,
+                porcentajeGanancia,
+                precontado,
+                porcentajeGananciaMayorista,
+                precioVentaMayorista,
+                fechaVencimiento,
+                fechaUltimaCarga,
+                activo,
+                oferta,
+                foto
+            )
+            VALUES (
+                %s, %s, %s, %s, %s, %s, %s, %s,
+                %s, %s, %s, %s, %s, %s, %s, %s,
+                %s, %s, %s, %s, %s, %s, %s
+            )
+        """
+
+        datos = (
+            codigo,
+            codigoBarras,
+            concepto,
+            descripcion,
+            idrubro,
+            idproveedor,
+            idmarca,
+            puntoReposicion,
+            existencia,
+            idumedida,
+            dolar,
+            precio,
+            idtipoiva,
+            precioCosto,
+            porcentajeGanancia,
+            precontado,
+            porcentajeGananciaMayorista,
+            precioVentaMayorista,
+            fechaVencimiento,
+            fechaUltimaCarga,
+            activo,
+            oferta,
+            nuevoNombreFoto
+        )
+
+        cursor.execute(sql, datos)
+        conn.commit()
+
+        flash('Artículo guardado correctamente.')
+
+    except Exception as e:
+        conn.rollback()
+        flash(f'Error al guardar el artículo: {str(e)}')
+        raise
+
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('entidades.articulos'))
+
 
 
 # Eliminar Articulo
@@ -105,70 +253,221 @@ def destroy(id):
 
     return redirect('/')
 
+
 # Editar Articulo
 @entidades_bp.route('/edit_articulo/<id>')
 @login_required
 def edit(id):
+
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute('select * FROM articulos WHERE id = %s', (id,))
-    articulos=cursor.fetchall()
-    #conn.commit()
+
+    # Artículo
+    cursor.execute(
+        'SELECT * FROM articulos WHERE id = %s',
+        (id,)
+    )
+    articulos = cursor.fetchall()
+
+    # Rubros
+    cursor.execute(
+        'SELECT * FROM articulos_rubros ORDER BY concepto'
+    )
+    rubros = cursor.fetchall()
+
+    # Proveedores
+    cursor.execute(
+        'SELECT * FROM proveedores ORDER BY concepto'
+    )
+    proveedores = cursor.fetchall()
+
+    # Marcas
+    cursor.execute(
+        'SELECT * FROM articulos_marcas ORDER BY concepto'
+    )
+    marcas = cursor.fetchall()
+
+    # Unidades
+    cursor.execute(
+        'SELECT * FROM articulos_unidades ORDER BY concepto'
+    )
+    unidades = cursor.fetchall()
+
+    # Tipos de IVA
+    cursor.execute(
+        'SELECT * FROM articulos_tipos_iva ORDER BY concepto'
+    )
+    tiposiva = cursor.fetchall()
 
     cursor.close()
     conn.close()
 
-    return render_template('articulos/edit_articulo.html', articulos=articulos)
+    return render_template(
+        'articulos/edit_articulo.html',
+        articulos=articulos,
+        rubros=rubros,
+        proveedores=proveedores,
+        marcas=marcas,
+        unidades=unidades,
+        tiposiva=tiposiva
+    )
+
 
 # Actualizar Articulo
 @entidades_bp.route('/actualizar_articulo', methods=["POST"])
 @login_required
 def update():
-    id = request.form['txtID']
-    _codigo = request.form['txtCodigo']
-    _concepto = request.form['txtConcepto']
-    _foto = request.files['txtFoto']
+
+    id = request.form.get('txtID')
+
+    # Datos generales
+    codigo = request.form.get('txtCodigo')
+    codigoBarras = request.form.get('txtCodigoBarras')
+    concepto = request.form.get('txtConcepto')
+    descripcion = request.form.get('txtDescripcion')
+
+    # Relaciones
+    idrubro = request.form.get('txtRubro') or None
+    idproveedor = request.form.get('txtProveedor') or None
+    idmarca = request.form.get('txtMarca') or None
+    idumedida = request.form.get('txtUnidad') or None
+    idtipoiva = request.form.get('txtIVA') or None
+
+    # Cantidades y precios
+    puntoReposicion = request.form.get('txtPuntoReposicion') or None
+    existencia = request.form.get('txtExistencia') or None
+    dolar = request.form.get('txtDolar') or None
+    precio = request.form.get('txtPrecio') or None
+    precioCosto = request.form.get('txtPrecioCosto') or None
+
+    # Ganancias y precios de venta
+    porcentajeGanancia = request.form.get('txtPorcentajeGanancia') or None
+    precontado = request.form.get('txtPrecioMinorista') or None
+    porcentajeGananciaMayorista = request.form.get('txtPorcentajeGananciaMayorista') or None
+    precioVentaMayorista = request.form.get('txtPrecioMayorista') or None
+
+    # Fechas
+    fechaVencimiento = request.form.get('txtFechaVencimiento') or None
+    fechaUltimaCarga = request.form.get('txtFechaUltimaCarga') or None
+
+    # Casillas
+    activo = 1 if request.form.get('txtActivo') else 0
+    oferta = 1 if request.form.get('txtOferta') else 0
+
+    # Foto
+    foto = request.files.get('txtFoto')
+    nuevoNombreFoto = None
 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
-    # Si hay foto nueva
-    if _foto and _foto.filename != '':
-        now = datetime.now()
-        tiempo = now.strftime("%Y%H%M%S")
-        nuevoNombreFoto = tiempo + _foto.filename
-        _foto.save(os.path.join(app.config['CARPETA'], nuevoNombreFoto))
+    try:
 
-        # Borrar foto anterior
-        cursor.execute("SELECT foto FROM articulos WHERE id=%s", (id,))
+        # Recuperar foto anterior
+        cursor.execute(
+            "SELECT foto FROM articulos WHERE id=%s",
+            (id,)
+        )
         fila = cursor.fetchone()
-        if fila and fila['foto']:
-            ruta_foto = os.path.join(app.config['CARPETA'], fila['foto'])
+
+        # Si se seleccionó una foto nueva
+        if foto and foto.filename != '':
+
+            now = datetime.now()
+            tiempo = now.strftime("%Y%m%d%H%M%S")
+            nuevoNombreFoto = tiempo + foto.filename
+
+            foto.save(
+                os.path.join(
+                    current_app.config['CARPETA'],
+                    nuevoNombreFoto
+                )
+            )
+
+        # Actualizar artículo
+        sql = """
+            UPDATE articulos SET
+                codigo=%s,
+                codigoBarras=%s,
+                concepto=%s,
+                descripcion=%s,
+                idrubro=%s,
+                idproveedor=%s,
+                idmarca=%s,
+                puntoReposicion=%s,
+                existencia=%s,
+                idumedida=%s,
+                dolar=%s,
+                precio=%s,
+                idtipoiva=%s,
+                precioCosto=%s,
+                porcentajeGanancia=%s,
+                precontado=%s,
+                porcentajeGananciaMayorista=%s,
+                precioVentaMayorista=%s,
+                fechaVencimiento=%s,
+                fechaUltimaCarga=%s,
+                activo=%s,
+                oferta=%s
+        """
+
+        datos = [
+            codigo,
+            codigoBarras,
+            concepto,
+            descripcion,
+            idrubro,
+            idproveedor,
+            idmarca,
+            puntoReposicion,
+            existencia,
+            idumedida,
+            dolar,
+            precio,
+            idtipoiva,
+            precioCosto,
+            porcentajeGanancia,
+            precontado,
+            porcentajeGananciaMayorista,
+            precioVentaMayorista,
+            fechaVencimiento,
+            fechaUltimaCarga,
+            activo,
+            oferta
+        ]
+
+        # Si hay foto nueva, también actualizarla
+        if nuevoNombreFoto:
+            sql += ", foto=%s"
+            datos.append(nuevoNombreFoto)
+
+        sql += " WHERE id=%s"
+        datos.append(id)
+
+        cursor.execute(sql, tuple(datos))
+        conn.commit()
+
+        # Borrar foto anterior solamente después de guardar
+        if nuevoNombreFoto and fila and fila['foto']:
+
+            ruta_foto = os.path.join(
+                current_app.config['CARPETA'],
+                fila['foto']
+            )
+
             if os.path.exists(ruta_foto):
                 os.remove(ruta_foto)
 
-        sql = """
-            UPDATE articulos
-            SET codigo=%s, concepto=%s, foto=%s
-            WHERE id=%s
-        """
-        datos = (_codigo, _concepto, nuevoNombreFoto, id)
+    except Exception:
+        conn.rollback()
+        raise
 
-    # Si NO se cambia la foto
-    else:
-        sql = """
-            UPDATE articulos
-            SET codigo=%s, concepto=%s
-            WHERE id=%s
-        """
-        datos = (_codigo, _concepto, id)
+    finally:
+        cursor.close()
+        conn.close()
 
-    cursor.execute(sql, datos)
-    conn.commit()
-    cursor.close()
-    conn.close()
+    return redirect(url_for('entidades.articulos'))
 
-    return redirect(url_for('articulos'))
 
 
 

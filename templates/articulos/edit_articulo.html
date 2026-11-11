@@ -2,69 +2,302 @@
 
 {% block content %}
 
-{% for articulo in articulos  %}
+{% for articulo in articulos %}
 
-<form method="post" action="/actualizar_articulo" enctype="multipart/form-data">
+<div class="container my-4">
 
-    <div class="card">
-        <div class="card-header">
-            EDITAR Artículo
-        </div>
-        <div class="card-body">
-            <h5 class="card-title">Datos del Artículo</h5>
-            <p class="card-text">
-                <div class="form-group">
-                    <input type="hidden" value="{{articulo.id}}" name="txtID" id="txtID">
-                </div>    
+    <form method="post" action="/actualizar_articulo" enctype="multipart/form-data">
 
-                <div class="form-group">
-                    <label for="txtCodigo">Código:</label>
-                    <input id="txtCodigo" value="{{articulo.codigo}}" class="form-control campo-edicion" type="text" name="txtCodigo">
-                </div> 
+        <input type="hidden" name="txtID" value="{{ articulo.id }}">
+
+        <div class="card">
+            <div class="card-header">Modificar Artículo</div>
+
+            <div class="card-body">
+                <h5 class="card-title">Datos del Artículo</h5>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Código</label>
+                        <input class="form-control campo-edicion" type="text" name="txtCodigo"
+                            value="{{ articulo.codigo or '' }}">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label>Código Barras</label>
+                        <input class="form-control campo-edicion" type="text" name="txtCodigoBarras"
+                            value="{{ articulo.codigoBarras or '' }}">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Concepto</label>
+                        <input class="form-control campo-edicion" type="text" name="txtConcepto"
+                            value="{{ articulo.concepto or '' }}">
+                    </div>
+                </div>
+
                 <br>
-               
-                <div class="form-group">
-                    <label for="txtConcepto">Concepto:</label>
-                    <input id="txtConcepto" value="{{articulo.concepto}}" class="form-control campo-edicion" type="text" name="txtConcepto">
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Descripción</label>
+                        <textarea class="form-control campo-edicion" name="txtDescripcion"
+                            rows="3">{{ articulo.descripcion or '' }}</textarea>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="txtFoto">Foto:</label>
-                    <img id="preview"
-                    src="{{ url_for('uploads', nombreFoto=articulo.foto) }}"
-                        width="150"
-                        class="img-thumbnail">       
-
-                    <input id="txtFoto" class="form-control" type="file" name="txtFoto">
-                </div>
                 <br>
-               
-                
-                <br><br>
-                
-                <div class="form-group">
-                    <input type="submit" class="btn btn-success" value="Guardar">
-                        <a href="{{url_for('entidades.articulos')}}" class="btn btn-primary">Regresar</a>
+
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Rubro</label>
+                        <select class="form-control" name="txtRubro">
+                            <option value="">Seleccione</option>
+                            {% for r in rubros %}
+                            <option value="{{ r.id }}" {% if r.id==articulo.idrubro %}selected{% endif %}>
+                                {{ r.concepto }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <label>Proveedor</label>
+                        <select class="form-control" name="txtProveedor">
+                            <option value="">Seleccione</option>
+                            {% for p in proveedores %}
+                            <option value="{{ p.id }}" {% if p.id==articulo.idproveedor %}selected{% endif %}>
+                                {{ p.concepto }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <label>Marca</label>
+                        <select class="form-control" name="txtMarca">
+                            <option value="">Seleccione</option>
+                            {% for m in marcas %}
+                            <option value="{{ m.id }}" {% if m.id==articulo.idmarca %}selected{% endif %}>
+                                {{ m.concepto }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <label>Punto Reposición</label>
+                        <input class="form-control campo-edicion" type="number" step="0.01" name="txtPuntoReposicion"
+                            value="{{ articulo.puntoReposicion or 0 }}">
+                    </div>
+
+                    <div class="col-md-2">
+                        <label>Existencia</label>
+                        <input class="form-control campo-edicion" type="number" step="0.01" name="txtExistencia"
+                            value="{{ articulo.existencia or 0 }}" readonly>
+                    </div>
+
+                    <div class="col-md-2">
+                        <label>Unidad Medida</label>
+                        <select class="form-control campo-edicion" name="txtUnidad">
+                            <option value="">Seleccione</option>
+                            {% for u in unidades %}
+                            <option value="{{ u.id }}" {% if u.id==articulo.idunidad %}selected{% endif %}>
+                                {{ u.concepto }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
-            </p>
+
+                <br>
+
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Precio Dólar sin IVA</label>
+                        <input class="form-control campo-edicion" type="number" step="0.01" name="txtDolar"
+                            value="{{ articulo.dolar or 0 }}">
+                    </div>
+
+                    <div class="col-md-2">
+                        <label>Precio Pesos sin IVA</label>
+                        <input class="form-control campo-edicion" type="number" step="0.01" name="txtPrecio"
+                            value="{{ articulo.precio or 0 }}">
+                    </div>
+
+                    <div class="col-md-2">
+                        <label>Tipo IVA</label>
+                        <select class="form-control campo-edicion" name="txtIVA">
+                            <option value="">Seleccione</option>
+                            {% for iva in tiposiva %}
+                            <option value="{{ iva.id }}" {% if iva.id==articulo.idtipoiva %}selected{% endif %}>
+                                {{ iva.concepto }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <label>Precio Costo</label>
+                        <input class="form-control campo-edicion" type="number" step="0.01" name="txtPrecioCosto"
+                            value="{{ articulo.precioCosto or 0 }}">
+                    </div>
+                </div>
+
+                <br>
+
+                <div class="row">
+
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label>% Ganancia Minorista</label>
+                            <input id="txtPorcentajeGanancia" class="form-control campo-edicion" type="number"
+                                step="0.01" name="txtPorcentajeGanancia" value="{{ articulo.porcentajeGanancia or 0 }}">
+                        </div>
+
+                        <div class="col-md-2">
+                            <label>Precio Minorista</label>
+                            <input id="txtPrecioMinorista" class="form-control campo-edicion" type="number" step="0.01"
+                                name="txtPrecioMinorista" value="{{ articulo.precontado or 0 }}">
+                        </div>
+
+                        <div class="col-md-2">
+                            <label>% Ganancia Mayorista</label>
+                            <input id="txtPorcentajeGananciaMayorista" class="form-control campo-edicion" type="number"
+                                step="0.01" name="txtPorcentajeGananciaMayorista"
+                                value="{{ articulo.porcentajeGananciaMayorista or 0 }}">
+                        </div>
+
+                        <div class="col-md-2">
+                            <label>Precio Mayorista</label>
+                            <input id="txtPrecioMayorista" class="form-control campo-edicion" type="number" step="0.01"
+                                name="txtPrecioMayorista" value="{{ articulo.precioVentaMayorista or 0 }}">
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-2">
+                        <label>Fecha Vencimiento</label>
+                        <input class="form-control campo-edicion" type="date" name="txtFechaVencimiento"
+                            value="{{ articulo.fechaVencimiento.strftime('%Y-%m-%d') if articulo.fechaVencimiento else '' }}">
+                    </div>
+
+                    <div class="col-md-2">
+                        <label>Fecha Última Carga</label>
+                        <input class="form-control campo-edicion" type="date" name="txtFechaUltimaCarga"
+                            value="{{ articulo.fechaUltimaCarga.strftime('%Y-%m-%d') if articulo.fechaUltimaCarga else '' }}">
+                    </div>
+                </div>
+
+                <br>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Foto actual</label>
+                        <div class="mb-2">
+                            {% if articulo.foto %}
+                            <img id="preview" src="{{ url_for('uploads', nombreFoto=articulo.foto) }}"
+                                alt="Foto del artículo" class="img-thumbnail"
+                                style="width: 150px; height: 150px; object-fit: contain;">
+                            {% else %}
+                            <img id="preview" src=""
+                                style="display:none; width:150px; height:150px; object-fit:contain;"
+                                class="img-thumbnail">
+                            <span id="sinFoto" class="text-muted">Sin imagen</span>
+                            {% endif %}
+                        </div>
+
+                        <label>Reemplazar foto</label>
+                        <input id="txtFoto" class="form-control campo-edicion" type="file" name="txtFoto">
+                    </div>
+
+                    <div class="col-md-3">
+                        <br>
+                        <input type="checkbox" name="txtActivo" value="1" {% if articulo.activo %}checked{% endif %}>
+                        Activo
+                    </div>
+
+                    <div class="col-md-3">
+                        <br>
+                        <input type="checkbox" name="txtOferta" value="1" {% if articulo.oferta %}checked{% endif %}>
+                        Oferta
+                    </div>
+                </div>
+
+                <br>
+
+                <button type="submit" class="btn btn-success">Guardar</button>
+                <a href="{{ url_for('entidades.articulos') }}" class="btn btn-primary">Regresar</a>
+
+            </div>
         </div>
-    </div> 
-        
-</form>
+    </form>
+</div>
 
 <script>
     document.getElementById("txtFoto").addEventListener("change", function (event) {
         const file = event.target.files[0];
+
         if (file) {
             const reader = new FileReader();
+
             reader.onload = function (e) {
-            document.getElementById("preview").src = e.target.result;
+                const preview = document.getElementById("preview");
+                preview.src = e.target.result;
+                preview.style.display = "block";
+
+                const sinFoto = document.getElementById("sinFoto");
+                if (sinFoto) {
+                    sinFoto.style.display = "none";
+                }
             };
+
             reader.readAsDataURL(file);
         }
     });
-</script>   
-  
+
+
+    function calcularPrecios() {
+
+        const costo = parseFloat(
+            document.querySelector('[name="txtPrecioCosto"]').value
+        ) || 0;
+
+        const gananciaMinorista = parseFloat(
+            document.getElementById('txtPorcentajeGanancia').value
+        ) || 0;
+
+        const gananciaMayorista = parseFloat(
+            document.getElementById('txtPorcentajeGananciaMayorista').value
+        ) || 0;
+
+        // Precio minorista
+        const precioMinorista = costo + (costo * gananciaMinorista / 100);
+
+        document.getElementById('txtPrecioMinorista').value =
+            precioMinorista.toFixed(2);
+
+        // Precio mayorista
+        const precioMayorista = costo + (costo * gananciaMayorista / 100);
+
+        document.getElementById('txtPrecioMayorista').value =
+            precioMayorista.toFixed(2);
+    }
+
+    // Al modificar el costo
+    document.querySelector('[name="txtPrecioCosto"]')
+        .addEventListener('input', calcularPrecios);
+
+    // Al modificar ganancia minorista
+    document.getElementById('txtPorcentajeGanancia')
+        .addEventListener('input', calcularPrecios);
+
+    // Al modificar ganancia mayorista
+    document.getElementById('txtPorcentajeGananciaMayorista')
+        .addEventListener('input', calcularPrecios);
+
+</script>
+
 {% endfor %}
 
 {% endblock %}

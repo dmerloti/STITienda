@@ -24,13 +24,24 @@
             {% for articulo in articulos %}
             <tr>
                 <!--<td>{{ articulo.id }}</td>-->
-                <td>
-                <img class="img-thumbnail" width="100"
-                        src="{{ url_for('uploads', nombreFoto=articulo.foto) }}" alt="">
+                <td style="width: 120px; text-align: center;">
+                    {% if articulo.foto %}
+                    <img src="{{ url_for('uploads', nombreFoto=articulo.foto) }}" alt="{{ articulo.concepto }}"
+                        style="width: 100px; height: 80px; object-fit: contain;">
+                    {% else %}
+                    <div style="width: 100px; height: 80px;
+                    display: flex; align-items: center;
+                    justify-content: center;
+                    background-color: #e9ecef;
+                    border-radius: 5px;
+                    margin: auto;">
+                        <span class="text-muted">Sin imagen</span>
+                    </div>
+                    {% endif %}
                 </td>
                 <td>{{ articulo.codigo }}</td>
                 <td>{{ articulo.concepto }}</td>
-                <td>${{ "{:,.0f}".format(articulo.precontado) }}</td>
+                <td>${{ "{:,.0f}".format(articulo.preContado) }}</td>
                 <td>
                     <a href="#" class="btn btn-comprar btn-sm">
                         <i class="fa-solid fa-cart-shopping"></i>

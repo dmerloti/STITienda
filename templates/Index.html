@@ -24,7 +24,7 @@
 
                     <!-- Precio contado -->
                     <h4 class="text-success fw-bold">
-                        $ {{ "{:,.0f}".format(o.precontado) }}
+                        $ {{ "{:,.0f}".format(o.preContado) }}
                     </h4>
 
                     <!-- Concepto -->
@@ -35,11 +35,7 @@
                         {{ o.descripcion }}
                     </p>
 
-                    <!-- Cuotas -->
-                    <p class="small mb-2">
-                        6x $ {{ "{:,.0f}".format(o.cuotas6de) }}<br>
-                        12x $ {{ "{:,.0f}".format(o.cuotas12de) }}
-                    </p>
+                   
 
                     <a href="#" class="btn btn-comprar">
                         <i class="fa-solid fa-cart-shopping me-2"></i>

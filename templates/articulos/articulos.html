@@ -6,36 +6,74 @@
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3>Listado de Artículos</h3>
-        <a href="{{url_for("entidades.create_articulo")}}" class="btn btn-success">Ingresar NUEVO Artículo</a>
+        <a href="{{ url_for('entidades.create_articulo') }}" class="btn btn-success">
+            Ingresar NUEVO Artículo
+        </a>
     </div>
+
+    <div class="row mb-3 align-items-center">
+
+        <div class="col-md-4">
+            <input type="text" id="buscarArticulo" class="form-control"
+                placeholder="Buscar por código, barras o concepto..." autocomplete="off">
+        </div>
+
+        <div class="col-md-3">
+            <select id="filtrarRubro" class="form-select">
+                <option value="">Todos los rubros</option>
+                {% for r in rubros %}
+                <option value="{{ r.id }}">{{ r.concepto }}</option>
+                {% endfor %}
+            </select>
+
+        </div>
+
+        <div class="col-md-2">
+            <button type="button" class="btn btn-secondary w-100" onclick="limpiarFiltros()">
+                Limpiar
+            </button>
+        </div>
+
+        <div class="col-md-3">
+            <span class="text-muted" id="cantidadArticulos"></span>
+        </div>
+
+    </div>
+
 
     <table class="table table-light table-striped align-middle">
         <thead>
             <tr>
-                <th>#</th>
-                <th>Imagen</th>
+                <!--<th>#</th>-->
+                <!--<th>Imagen</th>-->
                 <th>Código</th>
                 <th>Concepto</th>
-                <th>Existencia</th>
-                <th>Punto Reposición</th>
+                <th>Stock</th>
+                <th>Reponer</th>
                 <th>Precio Costo</th>
-                <th>Precio Minorista</th>
-                <th>Precio Mayorista</th>
-                <th>Rubro</th>
-                <th>¿Es Oferta?</th>
-                <th>¿Está Activo?</th>
-                <th>Acciones</th>
+                <th>Ganancia</th>
+                <th>Precio Venta</th>
+                <!--<th>Rubro</th>-->
+                <th>¿Oferta?</th>
+                <th>¿Activo?</th>
+                <th>¿Usado?</th>
             </tr>
         </thead>
 
         <tbody>
             {% for articulo in articulos %}
-            <tr>
-                <td>{{ articulo.id }}</td>
-                <td>
-                <img class="img-thumbnail" width="100"
-                src="{{ url_for('uploads', nombreFoto=articulo.foto) }}"
-                alt="Imagen del artículo">
+            <tr class="fila-articulo"
+                data-busqueda="{{ articulo.codigo or '' }} {{ articulo.codigoBarras or '' }} {{ articulo.concepto or '' }}"
+                data-rubro="{{ articulo.idrubro or '' }}">
+                <!--<td>{{ articulo.id }}</td>-->
+                <!--<td>
+                    <img class="img-thumbnail" width="100" {% if articulo.foto %} <img
+                        src="{{ url_for('uploads', nombreFoto=articulo.foto) }}" alt="{{ articulo.concepto }}"
+                        class="img-thumbnail" style="width: 60px; height: 60px; object-fit: contain;">
+                    {% else %}
+                    <span class="text-muted">Sin imagen</span>
+                    {% endif %}
+                    alt="Imagen del artículo">-->
                 </td>
                 <td>{{ articulo.codigo }}</td>
                 <td>{{ articulo.concepto }}</td>
@@ -43,26 +81,181 @@
                 <td>{{ articulo.existencia }}</td>
                 <td>{{ articulo.ptoReposicion }}</td>
                 <td>${{ "{:,.0f}".format(articulo.precioCosto) }}</td>
+                <td>{{ "{:,.0f}".format(articulo.porcentajeGanancia) }}%</td>
                 <td>${{ "{:,.0f}".format(articulo.precontado) }}</td>
-                <td>${{ "{:,.0f}".format(articulo.precioVentaMayorista) }}</td>
-                <td>{{ articulo.rubro }}</td>
+                <!--<td>{{ articulo.rubro }}</td>-->
                 <td>{{ articulo.oferta }}</td>
                 <td>{{ articulo.activo }}</td>
                 <td>
-                    <a class="btn btn-warning btn-sm" href="{{ url_for('entidades.edit', id=articulo.id) }}">    
+                    {% if articulo.utilizado %}
+                    <span class="badge bg-success">Sí</span>
+                    {% else %}
+                    <span class="badge bg-secondary">No</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a class="btn btn-warning btn-sm" href="{{ url_for('entidades.edit', id=articulo.id) }}">
                         Editar
                     </a>
-                    <a class="btn btn-danger btn-sm"
-                       onclick="return confirm('¿Desea borrar el artículo?')"
-                       href="/destroy_articulo/{{ articulo.id }}">
-                        Eliminar
-                    </a>
+
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    <div class="d-flex justify-content-between align-items-center mt-3">
+
+        <div class="text-muted" id="infoPaginacion"></div>
+
+        <nav>
+            <ul class="pagination mb-0" id="paginador"></ul>
+        </nav>
+
+    </div>
 
 </div>
+<script>
 
+
+
+    const articulosPorPagina = 15;
+    let paginaActual = 1;
+
+    function filtrarArticulos() {
+
+        let texto = document.getElementById('buscarArticulo')
+            .value.toLowerCase().trim();
+
+        let rubroSeleccionado = document.getElementById('filtrarRubro').value;
+
+        let filas = Array.from(document.querySelectorAll('.fila-articulo'));
+
+        let articulosFiltrados = filas.filter(function (fila) {
+
+            let contenido = (fila.dataset.busqueda || '').toLowerCase();
+            let rubro = fila.dataset.rubro || '';
+
+            let coincideTexto = contenido.includes(texto);
+
+            let coincideRubro =
+                rubroSeleccionado === '' || rubro === rubroSeleccionado;
+
+            return coincideTexto && coincideRubro;
+        });
+
+        paginaActual = 1;
+
+        mostrarPagina(articulosFiltrados);
+    }
+
+    function mostrarPagina(articulosFiltrados) {
+
+        let total = articulosFiltrados.length;
+        let totalPaginas = Math.ceil(total / articulosPorPagina);
+
+        if (paginaActual > totalPaginas) {
+            paginaActual = Math.max(1, totalPaginas);
+        }
+
+        let inicio = (paginaActual - 1) * articulosPorPagina;
+        let fin = inicio + articulosPorPagina;
+
+        let filas = document.querySelectorAll('.fila-articulo');
+
+        // Ocultar todos los artículos
+        filas.forEach(function (fila) {
+            fila.style.display = 'none';
+        });
+
+        // Mostrar solamente los artículos de la página actual
+        articulosFiltrados.slice(inicio, fin).forEach(function (fila) {
+            fila.style.display = '';
+        });
+
+        // Cantidad encontrada
+        document.getElementById('cantidadArticulos').textContent =
+            'Artículos encontrados: ' + total;
+
+        // Información de paginación
+        document.getElementById('infoPaginacion').textContent =
+            total === 0
+                ? 'No hay artículos'
+                : 'Mostrando ' + (inicio + 1) + ' al ' +
+                Math.min(fin, total) + ' de ' + total;
+
+        // Botones del paginador
+        let paginador = document.getElementById('paginador');
+        paginador.innerHTML = '';
+
+        if (totalPaginas <= 1) {
+            return;
+        }
+
+        // Botón anterior
+        agregarBoton('Anterior', paginaActual - 1, paginaActual === 1);
+
+        // Números de páginas
+        for (let i = 1; i <= totalPaginas; i++) {
+
+            let li = document.createElement('li');
+            li.className = 'page-item' + (i === paginaActual ? ' active' : '');
+
+            let boton = document.createElement('button');
+            boton.className = 'page-link';
+            boton.textContent = i;
+            boton.type = 'button';
+
+            boton.addEventListener('click', function () {
+                paginaActual = i;
+                mostrarPagina(articulosFiltrados);
+            });
+
+            li.appendChild(boton);
+            paginador.appendChild(li);
+        }
+
+        // Botón siguiente
+        agregarBoton('Siguiente', paginaActual + 1,
+            paginaActual === totalPaginas);
+
+        function agregarBoton(texto, pagina, deshabilitado) {
+
+            let li = document.createElement('li');
+            li.className = 'page-item' +
+                (deshabilitado ? ' disabled' : '');
+
+            let boton = document.createElement('button');
+            boton.className = 'page-link';
+            boton.textContent = texto;
+            boton.type = 'button';
+            boton.disabled = deshabilitado;
+
+            boton.addEventListener('click', function () {
+                paginaActual = pagina;
+                mostrarPagina(articulosFiltrados);
+            });
+
+            li.appendChild(boton);
+            paginador.appendChild(li);
+        }
+    }
+
+    function limpiarFiltros() {
+
+        document.getElementById('buscarArticulo').value = '';
+        document.getElementById('filtrarRubro').value = '';
+
+        filtrarArticulos();
+    }
+
+    document.getElementById('buscarArticulo')
+        .addEventListener('input', filtrarArticulos);
+
+    document.getElementById('filtrarRubro')
+        .addEventListener('change', filtrarArticulos);
+
+    filtrarArticulos();
+
+
+</script>
 {% endblock %}

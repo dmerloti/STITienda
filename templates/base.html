@@ -83,7 +83,7 @@
                 </li>
             </ul>
 
-            <!-- empieza-->
+            <!-- empieza TABLAS-->
 
             <ul class="navbar-nav ms-auto">
                 <!-- ===================================================== -->
@@ -241,8 +241,97 @@
                 
 
             </ul>
+            <!-- termina TABLAS-->
 
-            <!-- termina -->
+
+            <!-- empieza STOCK-->    
+
+            <ul class="navbar-nav ms-auto">
+                <!-- ===================================================== -->
+                <!-- STOCK -->
+                <!-- ===================================================== -->
+                <li class="nav-item dropdown">
+
+                    <a class="nav-link dropdown-toggle" href="#" id="menuStock" role="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+
+                        Stock
+                    </a>
+
+                    <ul class="dropdown-menu">
+
+                        <!-- ================= Existencias ================= -->
+                        <li class="dropdown-submenu">
+
+                            <a class="dropdown-item dropdown-toggle" href="#">
+                                Existencias Artículos
+                            </a>
+
+                            <ul class="dropdown-menu">
+
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('entidades.articulos') }}">
+                                        Existencias
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('entidades.articulos') }}">
+                                        Costeo ABC
+                                    </a>
+                                </li>
+
+                            </ul>
+
+                        </li>
+
+                        <!-- ================= NOTAS DE PEDIDO ================= -->
+                        <li class="dropdown-submenu">
+
+                            <a class="dropdown-item dropdown-toggle" href="#">
+                                Notas de Pedido a Proveedor
+                            </a>
+
+                            <ul class="dropdown-menu">
+
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('soporte.localidades') }}">
+                                        Notas de Pedido
+                                    </a>
+                                </li>
+
+                                
+
+                            </ul>
+
+                        </li>
+
+                        <!-- ================= FACTURAS DE COMPRA ================= -->
+                        <li class="dropdown-submenu">
+
+                            <a class="dropdown-item dropdown-toggle" href="#">
+                                Facturas de Compra
+                            </a>
+
+                            <ul class="dropdown-menu">
+
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('soporte.grupos') }}">
+                                        facturas de Compra
+                                    </a>
+                                </li>
+
+                            </ul>
+
+                        </li>
+
+                        
+                    </ul>
+                </li>
+                
+
+            </ul>
+
+            <!-- termina STOCk-->
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navBarNav">
                 <span class="navbar-toggler-icon"></span>

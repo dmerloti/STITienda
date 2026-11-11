@@ -66,7 +66,7 @@
                                 {% endfor %}
                             </select>
                         </div>
-                   <!-- </div>
+                        <!-- </div>
 
                     <br />
                     <br />
@@ -105,8 +105,8 @@
                         <input class="form-control campo-edicion" type="number" step="0.01" name="txtPrecio" />
                     </div>
 
-                    
-                <!--</div>
+
+                    <!--</div>
 
 
                 <div class="row">-->
@@ -122,38 +122,36 @@
 
                     <div class="col-md-2">
                         <label>Precio Costo</label>
-                        <input class="form-control campo-edicion" type="number" step="0.01" name="txtPrecioCosto" />
+                        <input id="txtPrecioCosto" class="form-control campo-edicion" type="number" step="0.01"
+                            name="txtPrecioCosto">
                     </div>
 
                     <br />
                 </div>
-                <div class="row">    
+                <div class="row">
                     <div class="col-md-2">
                         <label>% Ganancia Minorista</label>
-                        <input class="form-control campo-edicion" type="number" step="0.01"
-                            name="txtPorcentajeGanancia" />
+                        <input id="txtPorcentajeGanancia" class="form-control campo-edicion" type="number" step="0.01"
+                            name="txtPorcentajeGanancia">
                     </div>
 
                     <div class="col-md-2">
                         <label>Precio Minorista</label>
-                        <input class="form-control campo-edicion" type="number" step="0.01" name="txtPrecioMinorista" />
+                        <input id="txtPrecioMinorista" class="form-control campo-edicion" type="number" step="0.01"
+                            name="txtPrecioMinorista">
                     </div>
-                <!--</div>
 
-
-
-                <div class="row">-->
                     <div class="col-md-2">
                         <label>% Ganancia Mayorista</label>
-                        <input class="form-control campo-edicion" type="number" step="0.01"
-                            name="txtPorcentajeGananciaMayorista" />
+                        <input id="txtPorcentajeGananciaMayorista" class="form-control campo-edicion" type="number"
+                            step="0.01" name="txtPorcentajeGananciaMayorista">
                     </div>
 
                     <div class="col-md-2">
                         <label>Precio Mayorista</label>
-                        <input class="form-control campo-edicion" type="number" step="0.01" name="txtPrecioMayorista" />
+                        <input id="txtPrecioMayorista" class="form-control campo-edicion" type="number" step="0.01"
+                            name="txtPrecioMayorista">
                     </div>
-
                     <br />
 
                     <div class="col-md-2">
@@ -194,5 +192,51 @@
         </div>
     </form>
 </div>
+
+
+<script>
+    function calcularPrecios() {
+
+        const costo = parseFloat(
+            document.getElementById('txtPrecioCosto').value
+        ) || 0;
+
+        const gananciaMinorista = parseFloat(
+            document.getElementById('txtPorcentajeGanancia').value
+        ) || 0;
+
+        const gananciaMayorista = parseFloat(
+            document.getElementById('txtPorcentajeGananciaMayorista').value
+        ) || 0;
+
+        // Calcular precio minorista
+        const precioMinorista =
+            costo + (costo * gananciaMinorista / 100);
+
+        document.getElementById('txtPrecioMinorista').value =
+            precioMinorista.toFixed(2);
+
+        // Calcular precio mayorista
+        const precioMayorista =
+            costo + (costo * gananciaMayorista / 100);
+
+        document.getElementById('txtPrecioMayorista').value =
+            precioMayorista.toFixed(2);
+    }
+
+    // Cambios en precio costo
+    document.getElementById('txtPrecioCosto')
+        .addEventListener('input', calcularPrecios);
+
+    // Cambios en ganancia minorista
+    document.getElementById('txtPorcentajeGanancia')
+        .addEventListener('input', calcularPrecios);
+
+    // Cambios en ganancia mayorista
+    document.getElementById('txtPorcentajeGananciaMayorista')
+        .addEventListener('input', calcularPrecios);
+
+</script>
+
 
 {% endblock %}

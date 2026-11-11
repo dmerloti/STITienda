@@ -9,7 +9,7 @@ tienda_bp = Blueprint('tienda', __name__)
 def index():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM articulos;")
+    cursor.execute("SELECT * FROM articulos where oferta=1 and activo=1 order by concepto;")
     ofertas = cursor.fetchall()
     cursor.close()
     conn.close()
@@ -22,7 +22,7 @@ def index():
 def tienda():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM articulos;")
+    cursor.execute("SELECT * FROM articulos where activo=1 or existencia>0 order by concepto;")
     articulos = cursor.fetchall()
     cursor.close()
     conn.close()
